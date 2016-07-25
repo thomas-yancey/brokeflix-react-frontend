@@ -1,0 +1,44 @@
+var React = require('react')
+
+var PaginationLinks = React.createClass({
+  handleClick: function(pageNumber){
+    this.props.handlePaginationClick(pageNumber);
+  },
+  createLinkArray: function(){
+    var counter = this.props.current_page;
+    var linkArray = [];
+
+    if (counter > 1){
+      counter -= 1
+    };
+
+    for (var i=counter; i < counter + 5; i++){
+      if (i > this.props.total_pages){
+        break;
+      }
+      linkArray.push(i);
+    };
+    return linkArray;
+  },
+
+  render: function(){
+    this.createLinkArray();
+    var linkArray = this.createLinkArray();
+    var paginationLinks = linkArray.map(function(pageNumber){
+      return (<a className={pageNumber === this.props.current_page ? "active item" : "item"}
+                onClick={this.handleClick.bind(null,pageNumber)}>{pageNumber}</a>)
+      }.bind(this))
+    paginationLinks.unshift(<a className="item" onClick={this.handleClick.bind(null,1)}>First</a>)
+    paginationLinks.push(<a className="item" onClick={this.handleClick.bind(null,this.props.total_pages)}>Last</a>)
+    return (
+      <div>
+        {this.props.total_pages}
+        <div className="ui pagination menu">
+          {paginationLinks}
+        </div>
+      </div>
+    )
+  }
+});
+
+module.exports = PaginationLinks;
