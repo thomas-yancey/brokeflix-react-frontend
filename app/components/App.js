@@ -21,7 +21,6 @@ var App = React.createClass({
   getMoviesFromServer: function(pageNumber){
     var page = pageNumber ? pageNumber : 1
     var currURL = "http://localhost:3000/movies?page=" + page
-    debugger
     $.ajax({
       url: currURL,
       dataType: "json",

@@ -1,20 +1,29 @@
 var React = require('react')
 var Movie = require('./Movie')
+var ItemViewMovie = require('./ItemViewMovie')
+var GridViewMovie = require('./GridViewMovie')
 
 var Movies = React.createClass({
+
   collect_movies: function(){
     if (this.props.movies.length > 0){
       return this.props.movies.map(function(currMovie){
-        return (<Movie movie={currMovie}/>)
-      })
+        if (this.props.itemView){
+          return (<ItemViewMovie movie={currMovie} itemView={this.props.itemView}/>)
+        } else {
+          return (<GridViewMovie movie={currMovie} itemView={this.props.itemView}/>)
+        }
+      }.bind(this))
     }
   },
 
   render: function(){
     var movies = this.collect_movies();
     return (
-      <div>
-        {movies}
+      <div className="container">
+        <div className={this.props.itemView ? "ui divided items" : "ui doubling stackable grid"}>
+          {movies}
+        </div>
       </div>
     )
   }

@@ -31,11 +31,8 @@ var PaginationLinks = React.createClass({
     paginationLinks.unshift(<a className="item" onClick={this.handleClick.bind(null,1)}>First</a>)
     paginationLinks.push(<a className="item" onClick={this.handleClick.bind(null,this.props.total_pages)}>Last</a>)
     return (
-      <div>
-        {this.props.total_pages}
-        <div className="ui pagination menu">
-          {paginationLinks}
-        </div>
+      <div className="ui pagination menu">
+        {paginationLinks}
       </div>
     )
   }
