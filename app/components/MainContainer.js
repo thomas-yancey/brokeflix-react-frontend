@@ -17,7 +17,7 @@ var MainContainer = React.createClass({
 
   render: function(){
     return (
-      <div className="main-container">
+      <div className="ui thirteen wide column main-container">
         <div className={this.state.itemView ? "container" : null}>
           <div onClick={this.handleViewChange}>itemviewchange</div><br/>
           <br/>
