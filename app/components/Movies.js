@@ -20,11 +20,9 @@ var Movies = React.createClass({
   render: function(){
     var movies = this.collect_movies();
     return (
-      <div className="container">
-        <div className={this.props.itemView ? "ui divided items" : "ui doubling stackable grid"}>
+        <div className="ui divided items">
           {movies}
         </div>
-      </div>
     )
   }
 });

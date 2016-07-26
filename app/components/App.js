@@ -20,11 +20,15 @@ var App = React.createClass({
       actor: "",
       director: "",
       genre: "",
+      rating: "metascore",
+      allSources: [],
+      selectedSources: []
     })
   },
 
   componentWillMount: function(){
     this.getMoviesFromServer();
+    this.getDistinctSourcesFromServer();
   },
 
   getMoviesFromServer: function(){
@@ -33,7 +37,10 @@ var App = React.createClass({
       start_year: this.state.startYear,
       end_year: this.state.endYear,
       actor: this.state.actor,
-      director: this.state.director
+      director: this.state.director,
+      review_field: this.state.rating,
+      allSources: [],
+      selectedSources: []
     };
     var currURL = "http://localhost:3000/movies?" + $.param(params)
     $.ajax({
@@ -51,6 +58,30 @@ var App = React.createClass({
     }.bind(this))
   },
 
+  getDistinctSourcesFromServer: function(){
+    var currURL = "http://localhost:3000/sources"
+    $.ajax({
+      url: currURL,
+      dataType: "json",
+      contentType: 'application/json',
+      method: "get"
+    }).done(function(data){
+      var sources = data.map(function(source){
+        return source.display_name
+      });
+      this.setState({
+        allSources: sources,
+        selectedSources: sources
+      })
+    }.bind(this))
+  },
+
+  handleSelectedSources: function(sources){
+    this.setState({
+      selectedSources: sources
+    })
+  },
+
   handlePaginationClick: function(pageNumber){
     this.setState({
       current_page: pageNumber
@@ -65,7 +96,13 @@ var App = React.createClass({
 
   handleEndYearChange: function(value){
     this.setState({
-      EndYear: value
+      endYear: value
+    },this.getMoviesFromServer);
+  },
+
+  handleRatingChange: function(value){
+    this.setState({
+      rating: value
     },this.getMoviesFromServer);
   },
 
@@ -73,13 +110,17 @@ var App = React.createClass({
     return(
       <div>
         <Nav/>
-        <div className="ui grid">
+        <div className="ui stackable very relaxed aligned grid container">
           <div className="three wide column">
           <FilterContainer
           startYear={this.state.startYear}
           endYear={this.state.endYear}
+          selectedSources={this.state.selectedSources}
+          allSources={this.state.allSources}
           handleStartYearChange={this.handleStartYearChange}
           handleEndYearChange={this.handleEndYearChange}
+          handleRatingChange={this.handleRatingChange}
+          handleSelectedSources={this.handleSelectedSources}
           />
           </div>
           <div className="thirteen wide column">

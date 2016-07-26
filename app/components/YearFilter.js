@@ -18,7 +18,8 @@ var YearFilter = React.createClass({
 
   render: function(){
     return (
-      <div>
+      <div className="year-range-container">
+        <h4>Year Range</h4>
         <div className="ui input">
           <input type="text"
             placeholder="start year"

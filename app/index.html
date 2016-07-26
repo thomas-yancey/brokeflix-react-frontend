@@ -7,13 +7,22 @@
   <style type="text/css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.js"></script>
 
-  body {
-    text-align: center;
+  .main-container {
+    text-align: left;
   }
 
-  .main-container {
-    padding-top: 50px;
-  }
+  .tooltip {
+  display: none;
+}
+
+.tooltip-active {
+position: fixed;
+bottom: 0;
+right: 0;
+z-index: 99;
+opacity: 1;
+width: 100%
+}
 
   .entered-poster {
       background: black;

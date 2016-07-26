@@ -18,16 +18,15 @@ var MainContainer = React.createClass({
   render: function(){
     return (
       <div className="ui thirteen wide column main-container">
-        <div className={this.state.itemView ? "container" : null}>
-          <div onClick={this.handleViewChange}>itemviewchange</div><br/>
-          <br/>
+          <button className="ui right floated button" onClick={this.handleViewChange}>{this.state.itemView ? "Grid View" : "Item view"}</button>
           <Movies movies={this.props.movies}
-                  itemView={this.state.itemView}/>
+             itemView={this.state.itemView}
+           />
           <PaginationLinks current_page={this.props.current_page}
-                   total_pages={this.props.total_pages}
-                   total_entries={this.props.total_entries}
-                   handlePaginationClick={this.props.handlePaginationClick}/>
-        </div>
+             total_pages={this.props.total_pages}
+             total_entries={this.props.total_entries}
+             handlePaginationClick={this.props.handlePaginationClick}
+           />
       </div>
     )
   }

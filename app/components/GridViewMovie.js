@@ -1,4 +1,6 @@
 var React = require('react');
+var MovieInfo = require('./MovieInfo');
+var ToolTip = require('react-portal-tooltip');
 
 var GridViewMovie = React.createClass({
   getInitialState: function(){
@@ -11,7 +13,6 @@ var GridViewMovie = React.createClass({
     this.setState({
       hover: true
     })
-    console.log('in')
   },
 
   handleMouseLeave: function(){
@@ -22,14 +23,21 @@ var GridViewMovie = React.createClass({
 
   render: function(){
     return (
-      <div className="ui rounded image"
-        onMouseEnter={this.handleMouseEnter}
-        onMouseLeave={this.handleMouseLeave}
-        >
-        <div className={this.state.hover ? "entered-poster" : ""}>
-          <img src={this.props.movie.poster}/>
+        <div className="ui rounded image" style={{'padding': '5px'}}>
+          <div
+            onMouseEnter={this.handleMouseEnter}
+            onMouseLeave={this.handleMouseLeave}
+          >
+            <img src={this.props.movie.poster}
+              className={this.state.hover ? "entered-poster" : ""}
+              />
+            <div className={this.state.hover ? "tooltip-active" : "tooltip"}>
+              <div className="ui segment">
+                <MovieInfo movie={this.props.movie}/>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
     )
   }
 })
