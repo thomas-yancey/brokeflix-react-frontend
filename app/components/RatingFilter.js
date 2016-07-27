@@ -11,10 +11,12 @@ var RatingFilter = React.createClass({
 
   render: function(){
     return (
-      <div className="rating-filter-container">
-        <h4>rating agency</h4>
-        <p onClick={this.handleMetaCriticClick}>Metacritic</p>
-        <p onClick={this.handleTomatoClick}>TomatoMeter</p>
+      <div className="rating-container">
+        <h4>sorted by rating</h4>
+        <div className="ui vertical buttons">
+          <button className={this.props.ratingOrder === "metascore" ? "ui active button" : "ui button"} onClick={this.handleMetaCriticClick}>Metacritic</button>
+          <button className={this.props.ratingOrder === "tomato_meter" ? "ui active button" : "ui button"} onClick={this.handleTomatoClick}>TomatoMeter</button>
+        </div>
       </div>
     )
   }

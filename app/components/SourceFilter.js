@@ -1,33 +1,16 @@
 var React = require('react');
+var SourceCheckbox = require('./SourceCheckbox');
 
 var SourceFilter = React.createClass({
-
-  onSourceClick: function(e){
-    this.collectsources()
-    this.props.handleSelectedSources
-  },
-
-  contains: function(value){
-    for (var i=0; i < this.props.allSources.length; i++){
-      if (this.props.allSources[i] === value){
-        return true;
-      };
-    };
-    return false;
-  },
 
   createSources: function(){
     this.getInitialState
     return this.props.allSources.map(function(source){
       return(
-        <div className="item">
-          <div className="ui checkbox">
-            <input type="checkbox" checked={this.contains(source) ? "checked" : null}/>
-            <label>
-              {source}
-            </label>
-          </div>
-        </div>
+        <SourceCheckbox source={source}
+          selectedSources={this.props.selectedSources}
+          handleSourceChange={this.props.handleSourceChange}
+        />
       )
     }.bind(this))
   },

@@ -7,6 +7,7 @@ var PaginationLinks = require('./PaginationLinks');
 var Movies = require('./Movies');
 var MainContainer = require('./MainContainer');
 var FilterContainer = require('./FilterContainer');
+var YearFilter = require('./YearFilter');
 
 var App = React.createClass({
   getInitialState: function(){
@@ -27,7 +28,6 @@ var App = React.createClass({
   },
 
   componentWillMount: function(){
-    this.getMoviesFromServer();
     this.getDistinctSourcesFromServer();
   },
 
@@ -39,8 +39,8 @@ var App = React.createClass({
       actor: this.state.actor,
       director: this.state.director,
       review_field: this.state.rating,
-      allSources: [],
-      selectedSources: []
+      allSources: this.state.allSources,
+      selectedSources: this.state.selectedSources
     };
     var currURL = "http://localhost:3000/movies?" + $.param(params)
     $.ajax({
@@ -73,13 +73,34 @@ var App = React.createClass({
         allSources: sources,
         selectedSources: sources
       })
-    }.bind(this))
+    }.bind(this),this.getMoviesFromServer)
   },
 
-  handleSelectedSources: function(sources){
+  selectedSourcesContains: function(value){
+    for (var i = 0; i < this.state.selectedSources.length; i++){
+      if (this.state.selectedSources[i] === value){
+        return true;
+      }
+    }
+    return false;
+  },
+
+  removeUncheckedSource: function(source){
+    return this.state.selectedSources.filter(function(curr_source){
+      return source !== curr_source
+    }.bind(this));
+  },
+
+  handleSourceChange: function(source){
+    newSelectedSources = this.state.selectedSources
+    if (this.selectedSourcesContains(source)){
+      newSelectedSources = this.removeUncheckedSource(source)
+    } else {
+      newSelectedSources.push(source)
+    };
     this.setState({
-      selectedSources: sources
-    })
+      selectedSources: newSelectedSources
+    },this.getMoviesFromServer)
   },
 
   handlePaginationClick: function(pageNumber){
@@ -97,7 +118,13 @@ var App = React.createClass({
   handleEndYearChange: function(value){
     this.setState({
       endYear: value
-    },this.getMoviesFromServer);
+    },this.checkYearLength);
+  },
+
+  checkYearLength: function(){
+    if (this.state.endYear.length === 4 && this.state.startYear.length === 4){
+      this.getMoviesFromServer()
+    }
   },
 
   handleRatingChange: function(value){
@@ -106,7 +133,12 @@ var App = React.createClass({
     },this.getMoviesFromServer);
   },
 
+  onChange: function(component, values) {
+    console.log(values);
+  },
+
   render: function(){
+
     return(
       <div>
         <Nav/>
@@ -117,10 +149,11 @@ var App = React.createClass({
           endYear={this.state.endYear}
           selectedSources={this.state.selectedSources}
           allSources={this.state.allSources}
+          ratingOrder={this.state.rating}
           handleStartYearChange={this.handleStartYearChange}
           handleEndYearChange={this.handleEndYearChange}
           handleRatingChange={this.handleRatingChange}
-          handleSelectedSources={this.handleSelectedSources}
+          handleSourceChange={this.handleSourceChange}
           />
           </div>
           <div className="thirteen wide column">

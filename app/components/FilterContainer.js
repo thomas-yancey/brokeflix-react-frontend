@@ -7,18 +7,21 @@ var FilterContainer = React.createClass({
   render: function(){
     return (
       <div className="filter-container">
-      <h3>Filters</h3>
+      <h2>Filters</h2>
         <YearFilter
           startYear={this.props.startYear}
           endYear={this.props.endYear}
           handleStartYearChange={this.props.handleStartYearChange}
           handleEndYearChange={this.props.handleEndYearChange}
         />
-        <RatingFilter handleRatingChange={this.props.handleRatingChange}/>
+        <RatingFilter
+          handleRatingChange={this.props.handleRatingChange}
+          ratingOrder={this.props.ratingOrder}
+        />
         <SourceFilter
           allSources={this.props.allSources}
           selectedSources={this.props.selectedSources}
-          handleSelectedSources={this.props.handleSelectedSources}
+          handleSourceChange={this.props.handleSourceChange}
         />
       </div>
     )
