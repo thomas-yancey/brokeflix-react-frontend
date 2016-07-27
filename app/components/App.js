@@ -16,14 +16,15 @@ var App = React.createClass({
       current_page: 1,
       total_pages: 1,
       total_entries: 0,
-      startYear: 1900,
-      endYear: 2016,
+      startYear: "1900",
+      endYear: "2016",
       actor: "",
       director: "",
       genre: "",
       rating: "metascore",
       allSources: [],
-      selectedSources: []
+      selectedSources: [],
+      titleSearch: ""
     })
   },
 
@@ -40,7 +41,8 @@ var App = React.createClass({
       director: this.state.director,
       review_field: this.state.rating,
       allSources: this.state.allSources,
-      selectedSources: this.state.selectedSources
+      selectedSources: this.state.selectedSources,
+      title_search: this.state.titleSearch
     };
     var currURL = "http://localhost:3000/movies?" + $.param(params)
     $.ajax({
@@ -91,6 +93,13 @@ var App = React.createClass({
     }.bind(this));
   },
 
+  handleTitleSearchChange: function(search){
+    this.setState({
+      titleSearch: search,
+      current_page: 1
+    })
+  },
+
   handleSourceChange: function(source){
     newSelectedSources = this.state.selectedSources
     if (this.selectedSourcesContains(source)){
@@ -117,7 +126,7 @@ var App = React.createClass({
     this.setState({
       startYear: value,
       current_page: 1
-    },this.getMoviesFromServer);
+    },this.checkYearLength);
   },
 
   handleEndYearChange: function(value){
@@ -129,6 +138,7 @@ var App = React.createClass({
 
   checkYearLength: function(){
     if (this.state.endYear.length === 4 && this.state.startYear.length === 4){
+      debugger
       this.getMoviesFromServer()
     }
   },
@@ -161,6 +171,9 @@ var App = React.createClass({
           handleEndYearChange={this.handleEndYearChange}
           handleRatingChange={this.handleRatingChange}
           handleSourceChange={this.handleSourceChange}
+          titleSearch={this.state.titleSearch}
+          handleTitleSearchChange={this.handleTitleSearchChange}
+          getMoviesFromServer={this.getMoviesFromServer}
           />
           </div>
           <div className="thirteen wide column">

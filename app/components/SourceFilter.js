@@ -18,7 +18,7 @@ var SourceFilter = React.createClass({
   render: function(){
     return(
       <div className="source-filter">
-        <div className="ui relaxed divided list">
+        <div className="ui relaxed horizontal divided list">
           <h4>Sources</h4>
           {this.props.allSources.length > 0 ? this.createSources() : null}
         </div>
