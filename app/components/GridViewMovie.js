@@ -8,6 +8,7 @@ var GridViewMovie = React.createClass({
   getInitialState: function(){
     return ({
       hover: false,
+      clicked: false,
       visibleTrailer: false
     })
   },
@@ -37,6 +38,12 @@ var GridViewMovie = React.createClass({
     })
   },
 
+  handleMovieClick: function(){
+    this.setState({
+      clicked: true
+    })
+  },
+
   render: function(){
 
     var showingTrailer = "";
@@ -47,13 +54,12 @@ var GridViewMovie = React.createClass({
                         />)
     };
 
-    console.log(showingTrailer)
-
     return (
         <div className="ui rounded image" style={{'padding': '5px'}}>
           <div
             onMouseEnter={this.handleMouseEnter}
             onMouseLeave={this.handleMouseLeave}
+            onClick={this.handleMovieClick}
           >
             <img src={this.props.movie.poster}
               className={this.state.hover ? "entered-poster" : ""}

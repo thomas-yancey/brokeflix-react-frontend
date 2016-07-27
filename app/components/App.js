@@ -27,7 +27,7 @@ var App = React.createClass({
     })
   },
 
-  componentWillMount: function(){
+  componentDidMount: function(){
     this.getDistinctSourcesFromServer();
   },
 
@@ -99,25 +99,31 @@ var App = React.createClass({
       newSelectedSources.push(source)
     };
     this.setState({
-      selectedSources: newSelectedSources
+      selectedSources: newSelectedSources,
+      current_page: 1
     },this.getMoviesFromServer)
   },
 
   handlePaginationClick: function(pageNumber){
-    this.setState({
-      current_page: pageNumber
-    },this.getMoviesFromServer);
+    if (!(pageNumber > this.state.total_pages) && !(pageNumber < 1)){
+      this.setState({
+        current_page: pageNumber
+      },this.getMoviesFromServer);
+    }
+    window.scrollTo(0, 0);
   },
 
   handleStartYearChange: function(value){
     this.setState({
-      startYear: value
+      startYear: value,
+      current_page: 1
     },this.getMoviesFromServer);
   },
 
   handleEndYearChange: function(value){
     this.setState({
-      endYear: value
+      endYear: value,
+      current_page: 1
     },this.checkYearLength);
   },
 
@@ -129,7 +135,8 @@ var App = React.createClass({
 
   handleRatingChange: function(value){
     this.setState({
-      rating: value
+      rating: value,
+      current_page: 1
     },this.getMoviesFromServer);
   },
 
