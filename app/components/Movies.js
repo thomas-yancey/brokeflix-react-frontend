@@ -7,11 +7,21 @@ var Movies = React.createClass({
 
   collect_movies: function(){
     if (this.props.movies.length > 0){
-      return this.props.movies.map(function(currMovie){
+      return this.props.movies.map(function(currMovie, idx){
         if (this.props.itemView){
-          return (<ItemViewMovie movie={currMovie} itemView={this.props.itemView}/>)
+          return (
+            <ItemViewMovie key={currMovie + idx + 'itemview'}
+              movie={currMovie}
+              itemView={this.props.itemView}
+            />
+          )
         } else {
-          return (<GridViewMovie movie={currMovie} itemView={this.props.itemView}/>)
+          return (
+            <GridViewMovie key={currMovie + idx + 'gridview'} 
+              movie={currMovie}
+              itemView={this.props.itemView}
+            />
+          )
         }
       }.bind(this))
     }

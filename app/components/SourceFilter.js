@@ -7,7 +7,9 @@ var SourceFilter = React.createClass({
     this.getInitialState
     return this.props.allSources.map(function(source){
       return(
-        <SourceCheckbox source={source}
+        <SourceCheckbox
+          key={source + this.props.selectedSources}
+          source={source}
           selectedSources={this.props.selectedSources}
           handleSourceChange={this.props.handleSourceChange}
         />

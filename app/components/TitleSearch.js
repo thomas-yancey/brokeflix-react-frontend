@@ -18,15 +18,13 @@ var TitleSearch = React.createClass({
   render: function(){
     return (
       <div className="title-search-container">
-        <h4>Title search</h4>
-        <div className="ui input">
+        <div className={this.props.mobile ? "ui fluid input" : "ui fluid input" }>
           <input type="text"
             placeholder="Title search"
             onChange={this.onTextChange}
             value={this.props.titleSearch}
           />
         </div>
-        <button className="ui button" onClick={this.onSearchClick}>Search title</button>
       </div>
     )
   }

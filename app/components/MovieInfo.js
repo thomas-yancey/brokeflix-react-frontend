@@ -1,15 +1,18 @@
 var React = require('react');
 var TrailerModal = require('./TrailerModal');
+RatingContainer = require('./RatingContainer');
 
 var MovieInfo = React.createClass({
   hasTrailer: function(){
     if (this.props.movie.trailer){
       return (
-          <p>
-            <a onClick={this.onClickViewTrailer} href={this.props.movie.trailer}>
+            <div className="ui red button"
+              onClick={this.onClickViewTrailer}
+              href={this.props.movie.trailer}
+              style={{'display': 'inline'}}
+            >
               View Trailer
-            </a>
-          </p>
+            </div>
         )
     };
   },
@@ -24,9 +27,13 @@ var MovieInfo = React.createClass({
   },
 
   render: function(){
-    var sources = this.props.movie.sources.map(function(source){
+    var sources = this.props.movie.sources.map(function(source, idx){
       return (
-          <div className="item"><a href={source.link}>{source.display_name}</a></div>
+        <div key={source + "-item-" + idx} className="item">
+          <h4><a href={source.link}>
+            {source.display_name}
+          </a></h4>
+        </div>
       )
     });
 
@@ -39,11 +46,15 @@ var MovieInfo = React.createClass({
         </h2>
         <p>{this.props.movie.overview}</p>
         <p>Critic Consensus: {this.props.movie.tomato_consensus}</p>
-        <div className="ui horizontal list">
-          <div className="item">metascore: {this.props.movie.metascore}</div>
-          <div className="item">tomatometer: {this.props.movie.tomato_meter}</div>
+        <div className="item">
+          <div className="header">
+            <RatingContainer
+              tomato_meter={this.props.movie.tomato_meter}
+              metascore={this.props.movie.metascore}
+              hasTrailer={hasTrailer}
+            />
+          </div>
         </div>
-        {hasTrailer}
         <div className="sourceInfo">
           <h3>places to watch</h3>
           <div className="ui horizontal list">

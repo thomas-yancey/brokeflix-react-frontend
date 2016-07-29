@@ -1,4 +1,5 @@
 var React = require('react')
+var Rcslider = require('rc-slider')
 
 var YearFilter = React.createClass({
   getDefaultProps: function(){
@@ -8,33 +9,24 @@ var YearFilter = React.createClass({
     }
   },
 
-  onStartYearChange: function(e){
-    this.props.handleStartYearChange(e.target.value)
-  },
-
-  onEndYearChange: function(e){
-    this.props.handleEndYearChange(e.target.value)
+  onYearChange: function(e){
+    this.props.handleStartYearChange(e[0])
+    this.props.handleEndYearChange(e[1])
   },
 
   render: function(){
     return (
       <div className="year-range-container" >
-      <div className="ui modal"></div>
         <h4>Year Range</h4>
-        <div className="ui input">
-          <input type="text"
-            placeholder="start year"
-            value={this.props.startYear}
-            onChange={this.onStartYearChange}
-            />
-        </div>
-        <div className="ui input">
-          <input type="text"
-           placeholder="end year"
-           value={this.props.endYear}
-           onChange={this.onEndYearChange}
-           />
-        </div>
+          <Rcslider
+            range={true}
+            allowCross={false}
+            min={1900}
+            max={2016}
+            defaultValue={[1900,2016]}
+            value={[this.props.startYear,this.props.endYear]}
+            onChange={this.onYearChange}
+          />
       </div>
     )
   }

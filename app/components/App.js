@@ -8,6 +8,9 @@ var Movies = require('./Movies');
 var MainContainer = require('./MainContainer');
 var FilterContainer = require('./FilterContainer');
 var YearFilter = require('./YearFilter');
+var Rcslider = require('rc-slider');
+var _ = require('lodash');
+var $ = require('jquery');
 
 var App = React.createClass({
   getInitialState: function(){
@@ -24,15 +27,32 @@ var App = React.createClass({
       rating: "metascore",
       allSources: [],
       selectedSources: [],
-      titleSearch: ""
+      titleSearch: "",
+      mobile: true,
+      itemView: true
     })
   },
 
+  componentWillMount: function(){
+    window.addEventListener("resize", this.updateDimensions);
+    this.debounceGetMoviesFromServer = _.debounce(this.getMoviesFromServer,500);
+  },
+
   componentDidMount: function(){
-    this.getDistinctSourcesFromServer();
+    this.InitialGetSourcesAndMovies();
+    this.getStartingMobileState();
+  },
+
+  filterColumnStick: function(){
+    $('.ui.sticky')
+      .sticky({
+        context: '#main-container'
+      })
+    ;
   },
 
   getMoviesFromServer: function(){
+
     var params = {
       page: this.state.current_page,
       start_year: this.state.startYear,
@@ -60,7 +80,7 @@ var App = React.createClass({
     }.bind(this))
   },
 
-  getDistinctSourcesFromServer: function(){
+  InitialGetSourcesAndMovies: function(){
     var currURL = "http://localhost:3000/sources"
     $.ajax({
       url: currURL,
@@ -76,6 +96,39 @@ var App = React.createClass({
         selectedSources: sources
       })
     }.bind(this),this.getMoviesFromServer)
+  },
+
+  getStartingMobileState: function(){
+    if ($(window).width() < 800) {
+      this.setState ({
+        mobile: true,
+        itemView: true
+      })
+    } else {
+      this.setState ({
+        mobile: false,
+        itemView: false
+      })
+    }
+  },
+
+  updateDimensions: function(){
+    if ($(window).width() < 800) {
+      this.setState({
+        mobile: true,
+        itemView: true
+      })
+    } else {
+      this.setState({
+        mobile: false
+      })
+    }
+  },
+
+  handleViewChange: function(){
+    this.setState({
+      itemView: !this.state.itemView
+    });
   },
 
   selectedSourcesContains: function(value){
@@ -97,7 +150,7 @@ var App = React.createClass({
     this.setState({
       titleSearch: search,
       current_page: 1
-    })
+    },this.debounceGetMoviesFromServer)
   },
 
   handleSourceChange: function(source){
@@ -110,7 +163,7 @@ var App = React.createClass({
     this.setState({
       selectedSources: newSelectedSources,
       current_page: 1
-    },this.getMoviesFromServer)
+    },this.debounceGetMoviesFromServer)
   },
 
   handlePaginationClick: function(pageNumber){
@@ -126,21 +179,14 @@ var App = React.createClass({
     this.setState({
       startYear: value,
       current_page: 1
-    },this.checkYearLength);
+    });
   },
 
   handleEndYearChange: function(value){
     this.setState({
       endYear: value,
       current_page: 1
-    },this.checkYearLength);
-  },
-
-  checkYearLength: function(){
-    if (this.state.endYear.length === 4 && this.state.startYear.length === 4){
-      debugger
-      this.getMoviesFromServer()
-    }
+    },this.debounceGetMoviesFromServer);
   },
 
   handleRatingChange: function(value){
@@ -150,38 +196,39 @@ var App = React.createClass({
     },this.getMoviesFromServer);
   },
 
-  onChange: function(component, values) {
-    console.log(values);
-  },
-
   render: function(){
 
     return(
       <div>
         <Nav/>
         <div className="ui stackable very relaxed aligned grid container">
-          <div className="three wide column">
-          <FilterContainer
-          startYear={this.state.startYear}
-          endYear={this.state.endYear}
-          selectedSources={this.state.selectedSources}
-          allSources={this.state.allSources}
-          ratingOrder={this.state.rating}
-          handleStartYearChange={this.handleStartYearChange}
-          handleEndYearChange={this.handleEndYearChange}
-          handleRatingChange={this.handleRatingChange}
-          handleSourceChange={this.handleSourceChange}
-          titleSearch={this.state.titleSearch}
-          handleTitleSearchChange={this.handleTitleSearchChange}
-          getMoviesFromServer={this.getMoviesFromServer}
-          />
+          <div className={this.state.mobile ? "row" : "three wide column"}>
+            <FilterContainer
+              startYear={this.state.startYear}
+              endYear={this.state.endYear}
+              handleStartYearChange={this.handleStartYearChange}
+              handleEndYearChange={this.handleEndYearChange}
+              titleSearch={this.state.titleSearch}
+              handleTitleSearchChange={this.handleTitleSearchChange}
+              getMoviesFromServer={this.getMoviesFromServer}
+              handleRatingChange={this.handleRatingChange}
+              ratingOrder={this.state.rating}
+              mobile={this.state.mobile}
+              allSources={this.state.allSources}
+              selectedSources={this.state.selectedSources}
+              handleSourceChange={this.handleSourceChange}
+            />
           </div>
-          <div className="thirteen wide column">
-          <MainContainer movies={this.state.movies}
-                         current_page={this.state.current_page}
-                         total_pages={this.state.total_pages}
-                         total_entries={this.state.total_entries}
-                         handlePaginationClick={this.handlePaginationClick}/>
+          <div className={this.state.mobile ? "row" : "thirteen wide column"}>
+            <MainContainer movies={this.state.movies}
+               current_page={this.state.current_page}
+               total_pages={this.state.total_pages}
+               total_entries={this.state.total_entries}
+               handlePaginationClick={this.handlePaginationClick}
+               itemView={this.state.itemView}
+               mobile={this.state.mobile}
+               handleViewChange={this.handleViewChange}
+             />
           </div>
         </div>
       </div>

@@ -14,7 +14,6 @@ var GridViewMovie = React.createClass({
   },
 
   onClickOutside: function(evt){
-    debugger
     this.setState({
       visibleTrailer: false
     })
