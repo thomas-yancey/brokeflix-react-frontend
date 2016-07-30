@@ -1,5 +1,4 @@
 var React = require('react')
-var Movie = require('./Movie')
 var ItemViewMovie = require('./ItemViewMovie')
 var GridViewMovie = require('./GridViewMovie')
 
@@ -13,13 +12,18 @@ var Movies = React.createClass({
             <ItemViewMovie key={currMovie + idx + 'itemview'}
               movie={currMovie}
               itemView={this.props.itemView}
+              mobile={this.props.mobile}
             />
           )
         } else {
           return (
-            <GridViewMovie key={currMovie + idx + 'gridview'} 
-              movie={currMovie}
+            <GridViewMovie key={currMovie + idx + 'gridview'}
               itemView={this.props.itemView}
+              itemIdx={idx}
+              movieCount={this.props.movies.length}
+              movie={currMovie}
+              rightMost={((idx + 1) % this.props.gridLength === 0)}
+              gridLength={this.props.gridLength}
             />
           )
         }

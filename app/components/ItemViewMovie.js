@@ -41,6 +41,7 @@ var ItemViewMovie = React.createClass({
           onClickOutside={this.onClickOutside}
           viewTrailer={this.viewTrailer}
           visibleTrailer={this.state.visibleTrailer}
+          mobile={this.props.mobile}
         />
         {showingTrailer}
       </div>

@@ -7,8 +7,11 @@ var TitleSearch = require('./TitleSearch')
 var FilterContainer = React.createClass({
   render: function(){
     return (
-      <div className={this.props.mobile ? "filter-container-mobile" : "filter-container" }
-        style={{'min-width': '140px', 'padding-top': '30px'}}
+      <div className={this.props.mobile ?
+        "filter-container-mobile" :
+        "filter-container"
+        }
+        style={{'minWidth': '140px', 'paddingTop': '30px'}}
       >
       <h2>Filters</h2>
         <YearFilter

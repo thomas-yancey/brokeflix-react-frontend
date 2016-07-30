@@ -40,7 +40,9 @@ var MovieInfo = React.createClass({
     var hasTrailer = this.hasTrailer();
 
     return (
-      <div className="middle center aligned content">
+      <div className="middle center aligned content"
+        style={this.props.mobile ? {'padding-left': '20px', 'padding-right': '20px'} : null}
+      >
         <h2>
           {this.props.movie.title}
         </h2>

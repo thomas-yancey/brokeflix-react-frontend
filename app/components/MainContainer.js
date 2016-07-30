@@ -10,13 +10,25 @@ var MainContainer = React.createClass({
 
   render: function(){
     return (
-      <div className={this.props.mobile ? "main-container-mobile" : "main-container"}>
+      <div className={this.props.mobile ?
+        "main-container-mobile" :
+        "main-container"}
+        >
         <button
-          className={this.props.mobile ? "tooltip" : "ui right floated button"}
-          onClick={this.onViewChange}>{this.props.itemView ? "Grid View" : "Item view"}
+          className={this.props.mobile ?
+            "tooltip" :
+            "ui button view-button"
+          }
+          onClick={this.onViewChange}>
+            {this.props.itemView ?
+              "Grid View" :
+              "Item view"
+            }
         </button>
         <Movies
            movies={this.props.movies}
+           gridLength={this.props.gridLength}
+           mobile={this.props.mobile}
            itemView={this.props.itemView}
          />
         <PaginationLinks

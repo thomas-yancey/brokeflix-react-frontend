@@ -43,18 +43,50 @@ var GridViewMovie = React.createClass({
     })
   },
 
-  render: function(){
+  rightOrLeftToolTipStyle: function(){
+    if (this.props.rightMost){
+      return "tooltip-active-right"
+    } else {
+      return "tooltip-active-left"
+    }
+  },
 
+  isbottomLevelToolTip: function(idx){
+    if (this.props.movieCount < 5){
+      return false
+    };
+    var positionLast = this.props.movieCount - (this.props.itemIdx)
+    if (positionLast < (this.props.gridLength + 1)){
+      if (this.props.movieCount % this.props.gridLength === 0){
+        return true
+      } else if ((this.props.movieCount - 1) % this.props.gridLength === 0 && positionLast === 1){
+        return true
+      } else if (this.props.movieCount % 2 === 0 && positionLast < 3){
+        return true
+      } else if ((this.props.movieCount - 3) % this.props.gridLength === 0 && positionLast < 4){
+        return true
+      };
+      return false
+    };
+    return false
+  },
+
+  render: function(){
+    var toolTipStyle = this.rightOrLeftToolTipStyle();
+    if (this.isbottomLevelToolTip()){
+      toolTipStyle = "tooltip-active-up"
+    };
     var showingTrailer = "";
     if (this.state.visibleTrailer){
-      showingTrailer = (<TrailerModal
-                          youtubeKey={this.props.movie.trailer}
-                          onClickOutside={this.onClickOutside}
-                        />)
+      showingTrailer = (
+        <TrailerModal
+          youtubeKey={this.props.movie.trailer}
+          onClickOutside={this.onClickOutside}
+        />
+      )
     };
-
     return (
-        <div className="ui rounded image" style={{'padding': '5px'}}>
+        <div className="ui rounded image" style={{'width': '200px','padding': '5px'}}>
           <div
             onMouseEnter={this.handleMouseEnter}
             onMouseLeave={this.handleMouseLeave}
@@ -63,7 +95,7 @@ var GridViewMovie = React.createClass({
             <img src={this.props.movie.poster}
               className={this.state.hover ? "entered-poster" : ""}
               />
-            <div className={this.state.hover ? "tooltip-active" : "tooltip"}>
+            <div className={this.state.hover ? toolTipStyle : "tooltip"}>
               <div className="ui segment">
                 <MovieInfo movie={this.props.movie}
                   closeModal={this.closeModal}

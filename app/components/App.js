@@ -29,7 +29,8 @@ var App = React.createClass({
       selectedSources: [],
       titleSearch: "",
       mobile: true,
-      itemView: true
+      itemView: true,
+      gridLength: 4
     })
   },
 
@@ -40,15 +41,7 @@ var App = React.createClass({
 
   componentDidMount: function(){
     this.InitialGetSourcesAndMovies();
-    this.getStartingMobileState();
-  },
-
-  filterColumnStick: function(){
-    $('.ui.sticky')
-      .sticky({
-        context: '#main-container'
-      })
-    ;
+    this.updateDimensions();
   },
 
   getMoviesFromServer: function(){
@@ -98,31 +91,42 @@ var App = React.createClass({
     }.bind(this),this.getMoviesFromServer)
   },
 
-  getStartingMobileState: function(){
+  updateDimensions: function(){
+    this.handleChangeToMobile();
+    this.handleGridLengthChange();
+  },
+
+  handleChangeToMobile: function(){
     if ($(window).width() < 800) {
-      this.setState ({
+      this.setState({
         mobile: true,
         itemView: true
       })
-    } else {
-      this.setState ({
+    };
+    if ($(window).width() >= 800) {
+      this.setState({
         mobile: false,
         itemView: false
       })
-    }
+    };
   },
 
-  updateDimensions: function(){
-    if ($(window).width() < 800) {
+  handleGridLengthChange: function(){
+    if ($(window).width() >= 1200) {
       this.setState({
-        mobile: true,
-        itemView: true
+        gridLength: 4
       })
-    } else {
+    };
+    if ($(window).width() <= 1200) {
       this.setState({
-        mobile: false
+        gridLength: 3
       })
-    }
+    };
+    if ($(window).width() <= 991) {
+      this.setState({
+        gridLength: 2
+      })
+    };
   },
 
   handleViewChange: function(){
@@ -228,6 +232,7 @@ var App = React.createClass({
                itemView={this.state.itemView}
                mobile={this.state.mobile}
                handleViewChange={this.handleViewChange}
+               gridLength={this.state.gridLength}
              />
           </div>
         </div>
