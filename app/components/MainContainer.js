@@ -17,8 +17,9 @@ var MainContainer = React.createClass({
         <button
           className={this.props.mobile ?
             "tooltip" :
-            "ui button view-button"
+            "ui primary button"
           }
+          style={{'position': 'fixed', 'right': '0','margin-right': '20px'}}
           onClick={this.onViewChange}>
             {this.props.itemView ?
               "Grid View" :

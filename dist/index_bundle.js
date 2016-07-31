@@ -21156,7 +21156,7 @@
 	      selectedSources: this.state.selectedSources,
 	      title_search: this.state.titleSearch
 	    };
-	    var currURL = "http://localhost:3000/movies?" + $.param(params);
+	    var currURL = "http://brokeflix.herokuapp.com/movies?" + $.param(params);
 	    $.ajax({
 	      url: currURL,
 	      dataType: "json",
@@ -21184,7 +21184,7 @@
 	      selectedSources: this.state.selectedSources,
 	      title_search: this.state.titleSearch
 	    };
-	    var currURL = "http://localhost:3000/movies?" + $.param(params);
+	    var currURL = "http://brokeflix.herokuapp.com/movies?" + $.param(params);
 	    $.ajax({
 	      url: currURL,
 	      dataType: "json",
@@ -21201,7 +21201,7 @@
 	  },
 
 	  InitialGetSourcesAndMovies: function () {
-	    var currURL = "http://localhost:3000/sources";
+	    var currURL = "http://brokeflix.herokuapp.com/sources";
 	    $.ajax({
 	      url: currURL,
 	      dataType: "json",
@@ -21383,6 +21383,9 @@
 	          'div',
 	          { className: this.state.mobile ? "row" : "thirteen wide right floated column" },
 	          React.createElement(MainContainer, { movies: this.state.movies,
+	            current_page: this.state.current_page,
+	            total_pages: this.state.total_pages,
+	            total_entries: this.state.total_entries,
 	            handlePaginationClick: this.handlePaginationClick,
 	            itemView: this.state.itemView,
 	            mobile: this.state.mobile,
@@ -32933,7 +32936,6 @@
 
 
 	  styleSelector: function () {
-	    debugger;
 	    if (this.props.source.display_name === "Viewster") {
 	      return "mini ui yellow button";
 	    } else if (this.props.source.display_name === "Shout! Factory TV") {

@@ -59,7 +59,7 @@ var App = React.createClass({
       selectedSources: this.state.selectedSources,
       title_search: this.state.titleSearch
     };
-    var currURL = "http://brokeflix.herokuapp.com/movies?" + $.param(params)
+    var currURL = "http://brokeflix.herokuapp,com/movies?" + $.param(params)
     $.ajax({
       url: currURL,
       dataType: "json",
@@ -87,7 +87,7 @@ var App = React.createClass({
       selectedSources: this.state.selectedSources,
       title_search: this.state.titleSearch
     };
-    var currURL = "http://brokeflix.herokuapp.com/movies?" + $.param(params)
+    var currURL = "http://brokeflix.herokuapp,com/movies?" + $.param(params)
     $.ajax({
       url: currURL,
       dataType: "json",
@@ -104,7 +104,7 @@ var App = React.createClass({
   },
 
   InitialGetSourcesAndMovies: function(){
-    var currURL = "http://brokeflix.herokuapp.com/sources"
+    var currURL = "http://brokeflix.herokuapp,com/sources"
     $.ajax({
       url: currURL,
       dataType: "json",
@@ -239,8 +239,20 @@ var App = React.createClass({
   },
 
   render: function(){
-    var wideMenuStyle = {'position': 'fixed', 'width': '200px'};
-    var smallMenuStyle = {'position': 'fixed', 'width': '150px'};
+    var wideMenuStyle = {'position': 'fixed',
+                         'overflow-y': 'scroll',
+                         'width': '250px',
+                         'height': '100%',
+                         'left': '0',
+                         'padding-left': '20px',
+                         'margin-bottom': '50px'};
+    var smallMenuStyle = {'position': 'fixed',
+                          'overflow-y': 'scroll',
+                          'width': '220px',
+                          'left': '0',
+                          'padding-left': '20px',
+                          'padding-bottom': '150px',
+                          'height': '100%'};
     var mobileMenuStyle = {};
     menuStyle = "";
 
@@ -257,7 +269,7 @@ var App = React.createClass({
         <Nav/>
         <div className="ui stackable very relaxed aligned grid container">
           <div className={this.state.mobile ? "row" : "three wide column"}>
-            <div className="item fixie" style={menuStyle}>
+            <div className="filter-container" style={menuStyle}>
               <FilterContainer
                 startYear={this.state.startYear}
                 endYear={this.state.endYear}

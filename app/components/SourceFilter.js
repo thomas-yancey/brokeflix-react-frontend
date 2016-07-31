@@ -1,5 +1,4 @@
 var React = require('react');
-var SourceCheckbox = require('./SourceCheckbox');
 var SelectedSource = require('./SelectedSource');
 var NotSelectedSource = require('./NotSelectedSource');
 var onClickOutside = require('react-onclickoutside');
