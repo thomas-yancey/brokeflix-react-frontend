@@ -1,5 +1,5 @@
 var React = require('react')
-
+// Not currently in use, going with infininiteScroll
 var PaginationLinks = React.createClass({
   handleClick: function(pageNumber){
     this.props.handlePaginationClick(pageNumber);

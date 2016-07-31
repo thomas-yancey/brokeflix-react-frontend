@@ -16,8 +16,7 @@ var YearFilter = React.createClass({
 
   render: function(){
     return (
-      <div className="year-range-container" >
-        <h4>Year Range</h4>
+      <div className="year-range-container" style={{'width': '80%', 'margin': '0 auto'}}>
           <Rcslider
             range={true}
             allowCross={false}

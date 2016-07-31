@@ -1,6 +1,7 @@
 var React = require('react');
 var TrailerModal = require('./TrailerModal');
-RatingContainer = require('./RatingContainer');
+var RatingContainer = require('./RatingContainer');
+var Source = require('./Source');
 
 var MovieInfo = React.createClass({
   hasTrailer: function(){
@@ -28,13 +29,7 @@ var MovieInfo = React.createClass({
 
   render: function(){
     var sources = this.props.movie.sources.map(function(source, idx){
-      return (
-        <div key={source + "-item-" + idx} className="item">
-          <h4><a href={source.link}>
-            {source.display_name}
-          </a></h4>
-        </div>
-      )
+      return (<Source source={source} idx={idx}/>)
     });
 
     var hasTrailer = this.hasTrailer();

@@ -21126,7 +21126,8 @@
 	      selectedSources: [],
 	      titleSearch: "",
 	      mobile: true,
-	      itemView: true
+	      itemView: true,
+	      gridLength: 4
 	    };
 	  },
 
@@ -21137,13 +21138,7 @@
 
 	  componentDidMount: function () {
 	    this.InitialGetSourcesAndMovies();
-	    this.getStartingMobileState();
-	  },
-
-	  filterColumnStick: function () {
-	    $('.ui.sticky').sticky({
-	      context: '#main-container'
-	    });
+	    this.updateDimensions();
 	  },
 
 	  getMoviesFromServer: function () {
@@ -21193,31 +21188,42 @@
 	    }.bind(this), this.getMoviesFromServer);
 	  },
 
-	  getStartingMobileState: function () {
+	  updateDimensions: function () {
+	    this.handleChangeToMobile();
+	    this.handleGridLengthChange();
+	  },
+
+	  handleChangeToMobile: function () {
 	    if ($(window).width() < 800) {
 	      this.setState({
 	        mobile: true,
 	        itemView: true
 	      });
-	    } else {
+	    };
+	    if ($(window).width() >= 800) {
 	      this.setState({
 	        mobile: false,
 	        itemView: false
 	      });
-	    }
+	    };
 	  },
 
-	  updateDimensions: function () {
-	    if ($(window).width() < 800) {
+	  handleGridLengthChange: function () {
+	    if ($(window).width() >= 1200) {
 	      this.setState({
-	        mobile: true,
-	        itemView: true
+	        gridLength: 4
 	      });
-	    } else {
+	    };
+	    if ($(window).width() <= 1200) {
 	      this.setState({
-	        mobile: false
+	        gridLength: 3
 	      });
-	    }
+	    };
+	    if ($(window).width() <= 991) {
+	      this.setState({
+	        gridLength: 2
+	      });
+	    };
 	  },
 
 	  handleViewChange: function () {
@@ -21329,7 +21335,8 @@
 	            handlePaginationClick: this.handlePaginationClick,
 	            itemView: this.state.itemView,
 	            mobile: this.state.mobile,
-	            handleViewChange: this.handleViewChange
+	            handleViewChange: this.handleViewChange,
+	            gridLength: this.state.gridLength
 	          })
 	        )
 	      )
@@ -32367,8 +32374,12 @@
 	          });
 	        } else {
 	          return React.createElement(GridViewMovie, { key: currMovie + idx + 'gridview',
+	            itemView: this.props.itemView,
+	            itemIdx: idx,
+	            movieCount: this.props.movies.length,
 	            movie: currMovie,
-	            itemView: this.props.itemView
+	            rightMost: (idx + 1) % this.props.gridLength === 0,
+	            gridLength: this.props.gridLength
 	          });
 	        }
 	      }.bind(this));
@@ -32922,8 +32933,39 @@
 	    });
 	  },
 
-	  render: function () {
+	  rightOrLeftToolTipStyle: function () {
+	    if (this.props.rightMost) {
+	      return "tooltip-active-right";
+	    } else {
+	      return "tooltip-active-left";
+	    }
+	  },
 
+	  isbottomLevelToolTip: function (idx) {
+	    if (this.props.movieCount < 5) {
+	      return false;
+	    };
+	    var positionLast = this.props.movieCount - this.props.itemIdx;
+	    if (positionLast < this.props.gridLength + 1) {
+	      if (this.props.movieCount % this.props.gridLength === 0) {
+	        return true;
+	      } else if ((this.props.movieCount - 1) % this.props.gridLength === 0 && positionLast === 1) {
+	        return true;
+	      } else if (this.props.movieCount % 2 === 0 && positionLast < 3) {
+	        return true;
+	      } else if ((this.props.movieCount - 3) % this.props.gridLength === 0 && positionLast < 4) {
+	        return true;
+	      };
+	      return false;
+	    };
+	    return false;
+	  },
+
+	  render: function () {
+	    var toolTipStyle = this.rightOrLeftToolTipStyle();
+	    if (this.isbottomLevelToolTip()) {
+	      toolTipStyle = "tooltip-active-up";
+	    };
 	    var showingTrailer = "";
 	    if (this.state.visibleTrailer) {
 	      showingTrailer = React.createElement(TrailerModal, {
@@ -32931,10 +32973,9 @@
 	        onClickOutside: this.onClickOutside
 	      });
 	    };
-
 	    return React.createElement(
 	      'div',
-	      { className: 'ui rounded image', style: { 'padding': '5px' } },
+	      { className: 'ui rounded image', style: { 'width': '200px', 'padding': '5px' } },
 	      React.createElement(
 	        'div',
 	        {
@@ -32947,15 +32988,14 @@
 	        }),
 	        React.createElement(
 	          'div',
-	          { className: this.state.hover ? "tooltip-active" : "tooltip" },
+	          { className: this.state.hover ? toolTipStyle : "tooltip" },
 	          React.createElement(
 	            'div',
 	            { className: 'ui segment' },
 	            React.createElement(MovieInfo, { movie: this.props.movie,
 	              closeModal: this.closeModal,
 	              viewTrailer: this.viewTrailer,
-	              visibleTrailer: this.state.visibleTrailer,
-	              mobile: this.props.mobile
+	              visibleTrailer: this.state.visibleTrailer
 	            })
 	          )
 	        )
@@ -33645,16 +33685,18 @@
 	  render: function () {
 	    return React.createElement(
 	      'div',
-	      { className: this.props.mobile ? "main-container-mobile" : "main-container" },
+	      { className: this.props.mobile ? "main-container-mobile" : "main-container"
+	      },
 	      React.createElement(
 	        'button',
 	        {
-	          className: this.props.mobile ? "tooltip" : "ui right floated button",
+	          className: this.props.mobile ? "tooltip" : "ui button view-button",
 	          onClick: this.onViewChange },
 	        this.props.itemView ? "Grid View" : "Item view"
 	      ),
 	      React.createElement(Movies, {
 	        movies: this.props.movies,
+	        gridLength: this.props.gridLength,
 	        mobile: this.props.mobile,
 	        itemView: this.props.itemView
 	      }),
@@ -33687,7 +33729,7 @@
 	    return React.createElement(
 	      'div',
 	      { className: this.props.mobile ? "filter-container-mobile" : "filter-container",
-	        style: { 'min-width': '140px', 'padding-top': '30px' }
+	        style: { 'minWidth': '140px', 'paddingTop': '30px' }
 	      },
 	      React.createElement(
 	        'h2',

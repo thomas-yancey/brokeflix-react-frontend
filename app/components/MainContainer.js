@@ -31,12 +31,6 @@ var MainContainer = React.createClass({
            mobile={this.props.mobile}
            itemView={this.props.itemView}
          />
-        <PaginationLinks
-           current_page={this.props.current_page}
-           total_pages={this.props.total_pages}
-           total_entries={this.props.total_entries}
-           handlePaginationClick={this.props.handlePaginationClick}
-         />
       </div>
     )
   }

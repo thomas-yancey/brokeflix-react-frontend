@@ -36,7 +36,9 @@ var App = React.createClass({
 
   componentWillMount: function(){
     window.addEventListener("resize", this.updateDimensions);
+    window.addEventListener('scroll', this.handleScroll);
     this.debounceGetMoviesFromServer = _.debounce(this.getMoviesFromServer,500);
+    this.debounceInfiniteScroll = _.debounce(this.infininiteScrollFromServer,500);
   },
 
   componentDidMount: function(){
@@ -73,6 +75,34 @@ var App = React.createClass({
     }.bind(this))
   },
 
+  infininiteScrollFromServer: function(){
+    var params = {
+      page: this.state.current_page + 1,
+      start_year: this.state.startYear,
+      end_year: this.state.endYear,
+      actor: this.state.actor,
+      director: this.state.director,
+      review_field: this.state.rating,
+      allSources: this.state.allSources,
+      selectedSources: this.state.selectedSources,
+      title_search: this.state.titleSearch
+    };
+    var currURL = "http://localhost:3000/movies?" + $.param(params)
+    $.ajax({
+      url: currURL,
+      dataType: "json",
+      contentType: 'application/json',
+      method: "get"
+    }).done(function(data){
+      this.setState({
+        movies: this.state.movies.concat(data.movies),
+        current_page: data.current_page,
+        total_pages: data.total_pages,
+        total_entries: data.total_entries
+      })
+    }.bind(this))
+  },
+
   InitialGetSourcesAndMovies: function(){
     var currURL = "http://localhost:3000/sources"
     $.ajax({
@@ -89,6 +119,14 @@ var App = React.createClass({
         selectedSources: sources
       })
     }.bind(this),this.getMoviesFromServer)
+  },
+
+  handleScroll: function(){
+    $(window).scroll(function() {
+     if($(window).scrollTop() + $(window).height() == $(document).height()) {
+         this.debounceInfiniteScroll();
+       }
+    }.bind(this));
   },
 
   updateDimensions: function(){
@@ -201,33 +239,44 @@ var App = React.createClass({
   },
 
   render: function(){
+    var wideMenuStyle = {'position': 'fixed', 'width': '200px'};
+    var smallMenuStyle = {'position': 'fixed', 'width': '150px'};
+    var mobileMenuStyle = {};
+    menuStyle = "";
+
+    if (this.state.gridLength > 3){
+      menuStyle = wideMenuStyle;
+    } else if (this.state.mobile){
+      menuStyle = mobileMenuStyle;
+    } else {
+      menuStyle = smallMenuStyle;
+    };
 
     return(
       <div>
         <Nav/>
         <div className="ui stackable very relaxed aligned grid container">
           <div className={this.state.mobile ? "row" : "three wide column"}>
-            <FilterContainer
-              startYear={this.state.startYear}
-              endYear={this.state.endYear}
-              handleStartYearChange={this.handleStartYearChange}
-              handleEndYearChange={this.handleEndYearChange}
-              titleSearch={this.state.titleSearch}
-              handleTitleSearchChange={this.handleTitleSearchChange}
-              getMoviesFromServer={this.getMoviesFromServer}
-              handleRatingChange={this.handleRatingChange}
-              ratingOrder={this.state.rating}
-              mobile={this.state.mobile}
-              allSources={this.state.allSources}
-              selectedSources={this.state.selectedSources}
-              handleSourceChange={this.handleSourceChange}
-            />
+            <div className="item fixie" style={menuStyle}>
+              <FilterContainer
+                startYear={this.state.startYear}
+                endYear={this.state.endYear}
+                titleSearch={this.state.titleSearch}
+                ratingOrder={this.state.rating}
+                mobile={this.state.mobile}
+                allSources={this.state.allSources}
+                selectedSources={this.state.selectedSources}
+                handleSourceChange={this.handleSourceChange}
+                handleRatingChange={this.handleRatingChange}
+                handleTitleSearchChange={this.handleTitleSearchChange}
+                handleStartYearChange={this.handleStartYearChange}
+                handleEndYearChange={this.handleEndYearChange}
+                getMoviesFromServer={this.getMoviesFromServer}
+              />
+            </div>
           </div>
-          <div className={this.state.mobile ? "row" : "thirteen wide column"}>
+          <div className={this.state.mobile ? "row" : "thirteen wide right floated column"}>
             <MainContainer movies={this.state.movies}
-               current_page={this.state.current_page}
-               total_pages={this.state.total_pages}
-               total_entries={this.state.total_entries}
                handlePaginationClick={this.handlePaginationClick}
                itemView={this.state.itemView}
                mobile={this.state.mobile}
