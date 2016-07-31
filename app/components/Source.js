@@ -3,7 +3,6 @@ var React = require('react');
 var Source = React.createClass({
 
   styleSelector: function(){
-    debugger
     if (this.props.source.display_name === "Viewster"){
       return "mini ui yellow button";
     } else if (this.props.source.display_name === "Shout! Factory TV"){

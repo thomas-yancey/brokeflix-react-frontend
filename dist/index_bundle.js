@@ -21100,11 +21100,11 @@
 	var Nav = __webpack_require__(182);
 	var PaginationLinks = __webpack_require__(183);
 	var Movies = __webpack_require__(184);
-	var MainContainer = __webpack_require__(193);
-	var FilterContainer = __webpack_require__(194);
-	var YearFilter = __webpack_require__(195);
-	var Rcslider = __webpack_require__(196);
-	var _ = __webpack_require__(243);
+	var MainContainer = __webpack_require__(194);
+	var FilterContainer = __webpack_require__(195);
+	var YearFilter = __webpack_require__(196);
+	var Rcslider = __webpack_require__(197);
+	var _ = __webpack_require__(246);
 	var $ = __webpack_require__(174);
 
 	var App = React.createClass({
@@ -21133,7 +21133,9 @@
 
 	  componentWillMount: function () {
 	    window.addEventListener("resize", this.updateDimensions);
+	    window.addEventListener('scroll', this.handleScroll);
 	    this.debounceGetMoviesFromServer = _.debounce(this.getMoviesFromServer, 500);
+	    this.debounceInfiniteScroll = _.debounce(this.infininiteScrollFromServer, 500);
 	  },
 
 	  componentDidMount: function () {
@@ -21154,7 +21156,7 @@
 	      selectedSources: this.state.selectedSources,
 	      title_search: this.state.titleSearch
 	    };
-	    var currURL = "http://brokeflix.herokuapp.com/movies?" + $.param(params);
+	    var currURL = "http://localhost:3000/movies?" + $.param(params);
 	    $.ajax({
 	      url: currURL,
 	      dataType: "json",
@@ -21170,8 +21172,36 @@
 	    }.bind(this));
 	  },
 
+	  infininiteScrollFromServer: function () {
+	    var params = {
+	      page: this.state.current_page + 1,
+	      start_year: this.state.startYear,
+	      end_year: this.state.endYear,
+	      actor: this.state.actor,
+	      director: this.state.director,
+	      review_field: this.state.rating,
+	      allSources: this.state.allSources,
+	      selectedSources: this.state.selectedSources,
+	      title_search: this.state.titleSearch
+	    };
+	    var currURL = "http://localhost:3000/movies?" + $.param(params);
+	    $.ajax({
+	      url: currURL,
+	      dataType: "json",
+	      contentType: 'application/json',
+	      method: "get"
+	    }).done(function (data) {
+	      this.setState({
+	        movies: this.state.movies.concat(data.movies),
+	        current_page: data.current_page,
+	        total_pages: data.total_pages,
+	        total_entries: data.total_entries
+	      });
+	    }.bind(this));
+	  },
+
 	  InitialGetSourcesAndMovies: function () {
-	    var currURL = "http://brokeflix.herokuapp.com/sources";
+	    var currURL = "http://localhost:3000/sources";
 	    $.ajax({
 	      url: currURL,
 	      dataType: "json",
@@ -21186,6 +21216,14 @@
 	        selectedSources: sources
 	      });
 	    }.bind(this), this.getMoviesFromServer);
+	  },
+
+	  handleScroll: function () {
+	    $(window).scroll(function () {
+	      if ($(window).scrollTop() + $(window).height() == $(document).height()) {
+	        this.debounceInfiniteScroll();
+	      }
+	    }.bind(this));
 	  },
 
 	  updateDimensions: function () {
@@ -21298,6 +21336,18 @@
 	  },
 
 	  render: function () {
+	    var wideMenuStyle = { 'position': 'fixed', 'width': '200px' };
+	    var smallMenuStyle = { 'position': 'fixed', 'width': '150px' };
+	    var mobileMenuStyle = {};
+	    menuStyle = "";
+
+	    if (this.state.gridLength > 3) {
+	      menuStyle = wideMenuStyle;
+	    } else if (this.state.mobile) {
+	      menuStyle = mobileMenuStyle;
+	    } else {
+	      menuStyle = smallMenuStyle;
+	    };
 
 	    return React.createElement(
 	      'div',
@@ -21309,29 +21359,30 @@
 	        React.createElement(
 	          'div',
 	          { className: this.state.mobile ? "row" : "three wide column" },
-	          React.createElement(FilterContainer, {
-	            startYear: this.state.startYear,
-	            endYear: this.state.endYear,
-	            handleStartYearChange: this.handleStartYearChange,
-	            handleEndYearChange: this.handleEndYearChange,
-	            titleSearch: this.state.titleSearch,
-	            handleTitleSearchChange: this.handleTitleSearchChange,
-	            getMoviesFromServer: this.getMoviesFromServer,
-	            handleRatingChange: this.handleRatingChange,
-	            ratingOrder: this.state.rating,
-	            mobile: this.state.mobile,
-	            allSources: this.state.allSources,
-	            selectedSources: this.state.selectedSources,
-	            handleSourceChange: this.handleSourceChange
-	          })
+	          React.createElement(
+	            'div',
+	            { className: 'item fixie', style: menuStyle },
+	            React.createElement(FilterContainer, {
+	              startYear: this.state.startYear,
+	              endYear: this.state.endYear,
+	              titleSearch: this.state.titleSearch,
+	              ratingOrder: this.state.rating,
+	              mobile: this.state.mobile,
+	              allSources: this.state.allSources,
+	              selectedSources: this.state.selectedSources,
+	              handleSourceChange: this.handleSourceChange,
+	              handleRatingChange: this.handleRatingChange,
+	              handleTitleSearchChange: this.handleTitleSearchChange,
+	              handleStartYearChange: this.handleStartYearChange,
+	              handleEndYearChange: this.handleEndYearChange,
+	              getMoviesFromServer: this.getMoviesFromServer
+	            })
+	          )
 	        ),
 	        React.createElement(
 	          'div',
-	          { className: this.state.mobile ? "row" : "thirteen wide column" },
+	          { className: this.state.mobile ? "row" : "thirteen wide right floated column" },
 	          React.createElement(MainContainer, { movies: this.state.movies,
-	            current_page: this.state.current_page,
-	            total_pages: this.state.total_pages,
-	            total_entries: this.state.total_entries,
 	            handlePaginationClick: this.handlePaginationClick,
 	            itemView: this.state.itemView,
 	            mobile: this.state.mobile,
@@ -32295,7 +32346,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(2);
-
+	// Not currently in use, going with infininiteScroll
 	var PaginationLinks = React.createClass({
 	  displayName: "PaginationLinks",
 
@@ -32357,7 +32408,7 @@
 
 	var React = __webpack_require__(2);
 	var ItemViewMovie = __webpack_require__(185);
-	var GridViewMovie = __webpack_require__(190);
+	var GridViewMovie = __webpack_require__(191);
 
 	var Movies = React.createClass({
 	  displayName: 'Movies',
@@ -32465,7 +32516,8 @@
 
 	var React = __webpack_require__(2);
 	var TrailerModal = __webpack_require__(187);
-	RatingContainer = __webpack_require__(189);
+	var RatingContainer = __webpack_require__(189);
+	var Source = __webpack_require__(190);
 
 	var MovieInfo = React.createClass({
 	  displayName: 'MovieInfo',
@@ -32495,19 +32547,7 @@
 
 	  render: function () {
 	    var sources = this.props.movie.sources.map(function (source, idx) {
-	      return React.createElement(
-	        'div',
-	        { key: source + "-item-" + idx, className: 'item' },
-	        React.createElement(
-	          'h4',
-	          null,
-	          React.createElement(
-	            'a',
-	            { href: source.link },
-	            source.display_name
-	          )
-	        )
-	      );
+	      return React.createElement(Source, { source: source, idx: idx });
 	    });
 
 	    var hasTrailer = this.hasTrailer();
@@ -32887,8 +32927,62 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(2);
+
+	var Source = React.createClass({
+	  displayName: "Source",
+
+
+	  styleSelector: function () {
+	    debugger;
+	    if (this.props.source.display_name === "Viewster") {
+	      return "mini ui yellow button";
+	    } else if (this.props.source.display_name === "Shout! Factory TV") {
+	      return "mini ui orange button";
+	    } else if (this.props.source.display_name === "Watch Disney Channel") {
+	      return "mini ui purple button";
+	    } else if (this.props.source.display_name === "Popcornflix") {
+	      return "mini ui teal button";
+	    } else if (this.props.source.display_name === "Hulu") {
+	      return "mini ui blue button";
+	    } else if (this.props.source.display_name === "Tubi TV") {
+	      return "mini ui green button";
+	    } else if (this.props.source.display_name === "Xfinity") {
+	      return "mini ui brown button";
+	    } else if (this.props.source.display_name === "Lifetime") {
+	      return "mini ui violet button";
+	    } else if (this.props.source.display_name === "SnagFilms") {
+	      return "mini ui grey button";
+	    } else if (this.props.source.display_name === "Crackle") {
+	      return "mini ui olive button";
+	    } else if (this.props.source.display_name === "Break.com") {
+	      return "mini ui azure button";
+	    } else return "mini ui button";
+	  },
+
+	  render: function () {
+	    return React.createElement(
+	      "a",
+	      { href: this.props.source.link },
+	      React.createElement(
+	        "button",
+	        { key: this.props.source + "-item-" + this.props.idx,
+	          className: this.styleSelector()
+	        },
+	        this.props.source.display_name
+	      )
+	    );
+	  }
+	});
+
+	module.exports = Source;
+
+/***/ },
+/* 191 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(2);
 	var MovieInfo = __webpack_require__(186);
-	var ToolTip = __webpack_require__(191);
+	var ToolTip = __webpack_require__(192);
 	var TrailerModal = __webpack_require__(187);
 
 	var GridViewMovie = React.createClass({
@@ -33008,7 +33102,7 @@
 	module.exports = GridViewMovie;
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33039,7 +33133,7 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _isClient = __webpack_require__(192);
+	var _isClient = __webpack_require__(193);
 
 	var _isClient2 = _interopRequireDefault(_isClient);
 
@@ -33645,7 +33739,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports) {
 
 	/**
@@ -33667,7 +33761,7 @@
 	}
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(2);
@@ -33699,12 +33793,6 @@
 	        gridLength: this.props.gridLength,
 	        mobile: this.props.mobile,
 	        itemView: this.props.itemView
-	      }),
-	      React.createElement(PaginationLinks, {
-	        current_page: this.props.current_page,
-	        total_pages: this.props.total_pages,
-	        total_entries: this.props.total_entries,
-	        handlePaginationClick: this.props.handlePaginationClick
 	      })
 	    );
 	  }
@@ -33713,14 +33801,14 @@
 	module.exports = MainContainer;
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(2);
-	var YearFilter = __webpack_require__(195);
-	var RatingFilter = __webpack_require__(239);
-	var SourceFilter = __webpack_require__(240);
-	var TitleSearch = __webpack_require__(242);
+	var YearFilter = __webpack_require__(196);
+	var RatingFilter = __webpack_require__(240);
+	var SourceFilter = __webpack_require__(241);
+	var TitleSearch = __webpack_require__(245);
 
 	var FilterContainer = React.createClass({
 	  displayName: 'FilterContainer',
@@ -33732,9 +33820,9 @@
 	        style: { 'minWidth': '140px', 'paddingTop': '30px' }
 	      },
 	      React.createElement(
-	        'h2',
-	        null,
-	        'Filters'
+	        'h4',
+	        { className: 'ui horizontal divider header' },
+	        'year range'
 	      ),
 	      React.createElement(YearFilter, {
 	        startYear: this.props.startYear,
@@ -33742,21 +33830,36 @@
 	        handleStartYearChange: this.props.handleStartYearChange,
 	        handleEndYearChange: this.props.handleEndYearChange
 	      }),
+	      React.createElement(
+	        'h4',
+	        { className: 'ui horizontal divider header' },
+	        'search'
+	      ),
 	      React.createElement(TitleSearch, {
 	        titleSearch: this.props.titleSearch,
 	        handleTitleSearchChange: this.props.handleTitleSearchChange,
 	        getMoviesFromServer: this.props.getMoviesFromServer,
 	        mobile: this.props.mobile
 	      }),
-	      React.createElement(RatingFilter, {
-	        handleRatingChange: this.props.handleRatingChange,
-	        ratingOrder: this.props.ratingOrder,
-	        mobile: this.props.mobile
-	      }),
+	      React.createElement(
+	        'h4',
+	        { className: 'ui horizontal divider header' },
+	        'streaming source'
+	      ),
 	      React.createElement(SourceFilter, {
 	        allSources: this.props.allSources,
 	        selectedSources: this.props.selectedSources,
 	        handleSourceChange: this.props.handleSourceChange
+	      }),
+	      React.createElement(
+	        'h4',
+	        { className: 'ui horizontal divider header' },
+	        'Sorted By'
+	      ),
+	      React.createElement(RatingFilter, {
+	        handleRatingChange: this.props.handleRatingChange,
+	        ratingOrder: this.props.ratingOrder,
+	        mobile: this.props.mobile
 	      })
 	    );
 	  }
@@ -33765,11 +33868,11 @@
 	module.exports = FilterContainer;
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(2);
-	var Rcslider = __webpack_require__(196);
+	var Rcslider = __webpack_require__(197);
 
 	var YearFilter = React.createClass({
 	  displayName: 'YearFilter',
@@ -33789,12 +33892,7 @@
 	  render: function () {
 	    return React.createElement(
 	      'div',
-	      { className: 'year-range-container' },
-	      React.createElement(
-	        'h4',
-	        null,
-	        'Year Range'
-	      ),
+	      { className: 'year-range-container', style: { 'width': '80%', 'margin': '0 auto' } },
 	      React.createElement(Rcslider, {
 	        range: true,
 	        allowCross: false,
@@ -33811,15 +33909,15 @@
 	module.exports = YearFilter;
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(197);
+	module.exports = __webpack_require__(198);
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33846,27 +33944,27 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _rcUtilLibDomAddEventListener = __webpack_require__(198);
+	var _rcUtilLibDomAddEventListener = __webpack_require__(199);
 
 	var _rcUtilLibDomAddEventListener2 = _interopRequireDefault(_rcUtilLibDomAddEventListener);
 
-	var _classnames = __webpack_require__(202);
+	var _classnames = __webpack_require__(203);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _Track = __webpack_require__(203);
+	var _Track = __webpack_require__(204);
 
 	var _Track2 = _interopRequireDefault(_Track);
 
-	var _Handle = __webpack_require__(204);
+	var _Handle = __webpack_require__(205);
 
 	var _Handle2 = _interopRequireDefault(_Handle);
 
-	var _Steps = __webpack_require__(236);
+	var _Steps = __webpack_require__(237);
 
 	var _Steps2 = _interopRequireDefault(_Steps);
 
-	var _Marks = __webpack_require__(238);
+	var _Marks = __webpack_require__(239);
 
 	var _Marks2 = _interopRequireDefault(_Marks);
 
@@ -34378,7 +34476,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34388,7 +34486,7 @@
 	});
 	exports["default"] = addEventListenerWrap;
 
-	var _addDomEventListener = __webpack_require__(199);
+	var _addDomEventListener = __webpack_require__(200);
 
 	var _addDomEventListener2 = _interopRequireDefault(_addDomEventListener);
 
@@ -34408,7 +34506,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34420,7 +34518,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _EventObject = __webpack_require__(200);
+	var _EventObject = __webpack_require__(201);
 
 	var _EventObject2 = _interopRequireDefault(_EventObject);
 
@@ -34450,7 +34548,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34467,7 +34565,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _EventBaseObject = __webpack_require__(201);
+	var _EventBaseObject = __webpack_require__(202);
 
 	var _EventBaseObject2 = _interopRequireDefault(_EventBaseObject);
 
@@ -34733,7 +34831,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports) {
 
 	/**
@@ -34801,7 +34899,7 @@
 	module.exports = exports["default"];
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -34855,7 +34953,7 @@
 
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34894,7 +34992,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34917,7 +35015,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _rcTooltip = __webpack_require__(205);
+	var _rcTooltip = __webpack_require__(206);
 
 	var _rcTooltip2 = _interopRequireDefault(_rcTooltip);
 
@@ -35012,15 +35110,15 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(206);
+	module.exports = __webpack_require__(207);
 
 /***/ },
-/* 206 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35035,9 +35133,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _placements = __webpack_require__(207);
+	var _placements = __webpack_require__(208);
 
-	var _rcTrigger = __webpack_require__(208);
+	var _rcTrigger = __webpack_require__(209);
 
 	var _rcTrigger2 = _interopRequireDefault(_rcTrigger);
 
@@ -35155,7 +35253,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 207 */
+/* 208 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -35248,15 +35346,15 @@
 	exports["default"] = placements;
 
 /***/ },
-/* 208 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(209);
+	module.exports = __webpack_require__(210);
 
 /***/ },
-/* 209 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35275,21 +35373,21 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _contains = __webpack_require__(210);
+	var _contains = __webpack_require__(211);
 
 	var _contains2 = _interopRequireDefault(_contains);
 
-	var _addEventListener = __webpack_require__(198);
+	var _addEventListener = __webpack_require__(199);
 
 	var _addEventListener2 = _interopRequireDefault(_addEventListener);
 
-	var _Popup = __webpack_require__(211);
+	var _Popup = __webpack_require__(212);
 
 	var _Popup2 = _interopRequireDefault(_Popup);
 
-	var _utils = __webpack_require__(234);
+	var _utils = __webpack_require__(235);
 
-	var _getContainerRenderMixin = __webpack_require__(235);
+	var _getContainerRenderMixin = __webpack_require__(236);
 
 	var _getContainerRenderMixin2 = _interopRequireDefault(_getContainerRenderMixin);
 
@@ -35725,7 +35823,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 210 */
+/* 211 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -35743,7 +35841,7 @@
 	};
 
 /***/ },
-/* 211 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35762,19 +35860,19 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _rcAlign = __webpack_require__(212);
+	var _rcAlign = __webpack_require__(213);
 
 	var _rcAlign2 = _interopRequireDefault(_rcAlign);
 
-	var _rcAnimate = __webpack_require__(223);
+	var _rcAnimate = __webpack_require__(224);
 
 	var _rcAnimate2 = _interopRequireDefault(_rcAnimate);
 
-	var _PopupInner = __webpack_require__(232);
+	var _PopupInner = __webpack_require__(233);
 
 	var _PopupInner2 = _interopRequireDefault(_PopupInner);
 
-	var _LazyRenderBox = __webpack_require__(233);
+	var _LazyRenderBox = __webpack_require__(234);
 
 	var _LazyRenderBox2 = _interopRequireDefault(_LazyRenderBox);
 
@@ -35972,7 +36070,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 212 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35981,7 +36079,7 @@
 	  value: true
 	});
 
-	var _Align = __webpack_require__(213);
+	var _Align = __webpack_require__(214);
 
 	var _Align2 = _interopRequireDefault(_Align);
 
@@ -35992,7 +36090,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 213 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36009,15 +36107,15 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _domAlign = __webpack_require__(214);
+	var _domAlign = __webpack_require__(215);
 
 	var _domAlign2 = _interopRequireDefault(_domAlign);
 
-	var _addEventListener = __webpack_require__(198);
+	var _addEventListener = __webpack_require__(199);
 
 	var _addEventListener2 = _interopRequireDefault(_addEventListener);
 
-	var _isWindow = __webpack_require__(222);
+	var _isWindow = __webpack_require__(223);
 
 	var _isWindow2 = _interopRequireDefault(_isWindow);
 
@@ -36151,7 +36249,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 214 */
+/* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -36167,27 +36265,27 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _utils = __webpack_require__(215);
+	var _utils = __webpack_require__(216);
 
 	var _utils2 = _interopRequireDefault(_utils);
 
-	var _getOffsetParent = __webpack_require__(216);
+	var _getOffsetParent = __webpack_require__(217);
 
 	var _getOffsetParent2 = _interopRequireDefault(_getOffsetParent);
 
-	var _getVisibleRectForElement = __webpack_require__(217);
+	var _getVisibleRectForElement = __webpack_require__(218);
 
 	var _getVisibleRectForElement2 = _interopRequireDefault(_getVisibleRectForElement);
 
-	var _adjustForViewport = __webpack_require__(218);
+	var _adjustForViewport = __webpack_require__(219);
 
 	var _adjustForViewport2 = _interopRequireDefault(_adjustForViewport);
 
-	var _getRegion = __webpack_require__(219);
+	var _getRegion = __webpack_require__(220);
 
 	var _getRegion2 = _interopRequireDefault(_getRegion);
 
-	var _getElFuturePos = __webpack_require__(220);
+	var _getElFuturePos = __webpack_require__(221);
 
 	var _getElFuturePos2 = _interopRequireDefault(_getElFuturePos);
 
@@ -36374,7 +36472,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 215 */
+/* 216 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -36872,7 +36970,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 216 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36883,7 +36981,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _utils = __webpack_require__(215);
+	var _utils = __webpack_require__(216);
 
 	var _utils2 = _interopRequireDefault(_utils);
 
@@ -36930,7 +37028,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 217 */
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36941,11 +37039,11 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _utils = __webpack_require__(215);
+	var _utils = __webpack_require__(216);
 
 	var _utils2 = _interopRequireDefault(_utils);
 
-	var _getOffsetParent = __webpack_require__(216);
+	var _getOffsetParent = __webpack_require__(217);
 
 	var _getOffsetParent2 = _interopRequireDefault(_getOffsetParent);
 
@@ -37011,7 +37109,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 218 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37022,7 +37120,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _utils = __webpack_require__(215);
+	var _utils = __webpack_require__(216);
 
 	var _utils2 = _interopRequireDefault(_utils);
 
@@ -37071,7 +37169,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 219 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37082,7 +37180,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _utils = __webpack_require__(215);
+	var _utils = __webpack_require__(216);
 
 	var _utils2 = _interopRequireDefault(_utils);
 
@@ -37112,7 +37210,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 220 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37123,7 +37221,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _getAlignOffset = __webpack_require__(221);
+	var _getAlignOffset = __webpack_require__(222);
 
 	var _getAlignOffset2 = _interopRequireDefault(_getAlignOffset);
 
@@ -37153,7 +37251,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 221 */
+/* 222 */
 /***/ function(module, exports) {
 
 	/**
@@ -37198,7 +37296,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 222 */
+/* 223 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -37215,16 +37313,16 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 223 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	// export this package's api
-	module.exports = __webpack_require__(224);
+	module.exports = __webpack_require__(225);
 
 /***/ },
-/* 224 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37237,13 +37335,13 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _ChildrenUtils = __webpack_require__(225);
+	var _ChildrenUtils = __webpack_require__(226);
 
-	var _AnimateChild = __webpack_require__(226);
+	var _AnimateChild = __webpack_require__(227);
 
 	var _AnimateChild2 = _interopRequireDefault(_AnimateChild);
 
-	var _util = __webpack_require__(231);
+	var _util = __webpack_require__(232);
 
 	var _util2 = _interopRequireDefault(_util);
 
@@ -37556,7 +37654,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 225 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37678,7 +37776,7 @@
 	}
 
 /***/ },
-/* 226 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37697,11 +37795,11 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _cssAnimation = __webpack_require__(227);
+	var _cssAnimation = __webpack_require__(228);
 
 	var _cssAnimation2 = _interopRequireDefault(_cssAnimation);
 
-	var _util = __webpack_require__(231);
+	var _util = __webpack_require__(232);
 
 	var _util2 = _interopRequireDefault(_util);
 
@@ -37782,7 +37880,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 227 */
+/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37791,11 +37889,11 @@
 	  value: true
 	});
 
-	var _Event = __webpack_require__(228);
+	var _Event = __webpack_require__(229);
 
 	var _Event2 = _interopRequireDefault(_Event);
 
-	var _componentClasses = __webpack_require__(229);
+	var _componentClasses = __webpack_require__(230);
 
 	var _componentClasses2 = _interopRequireDefault(_componentClasses);
 
@@ -37974,7 +38072,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 228 */
+/* 229 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38067,7 +38165,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 229 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -38075,9 +38173,9 @@
 	 */
 
 	try {
-	  var index = __webpack_require__(230);
+	  var index = __webpack_require__(231);
 	} catch (err) {
-	  var index = __webpack_require__(230);
+	  var index = __webpack_require__(231);
 	}
 
 	/**
@@ -38264,7 +38362,7 @@
 
 
 /***/ },
-/* 230 */
+/* 231 */
 /***/ function(module, exports) {
 
 	module.exports = function(arr, obj){
@@ -38276,7 +38374,7 @@
 	};
 
 /***/ },
-/* 231 */
+/* 232 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -38308,7 +38406,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 232 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38321,7 +38419,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _LazyRenderBox = __webpack_require__(233);
+	var _LazyRenderBox = __webpack_require__(234);
 
 	var _LazyRenderBox2 = _interopRequireDefault(_LazyRenderBox);
 
@@ -38365,7 +38463,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 233 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38416,7 +38514,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 234 */
+/* 235 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38451,7 +38549,7 @@
 	}
 
 /***/ },
-/* 235 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38550,7 +38648,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 236 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38567,11 +38665,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(202);
+	var _classnames = __webpack_require__(203);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _warning = __webpack_require__(237);
+	var _warning = __webpack_require__(238);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -38623,7 +38721,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 237 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -38690,7 +38788,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 238 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38709,7 +38807,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(202);
+	var _classnames = __webpack_require__(203);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -38773,7 +38871,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 239 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(2);
@@ -38781,6 +38879,11 @@
 	var RatingFilter = React.createClass({
 	  displayName: "RatingFilter",
 
+	  getInitialState: function () {
+	    return {
+	      visibleMenu: false
+	    };
+	  },
 
 	  handleMetaCriticClick: function (e) {
 	    this.props.handleRatingChange("metascore");
@@ -38790,27 +38893,52 @@
 	    this.props.handleRatingChange("tomato_meter");
 	  },
 
+	  onToggleMenuOpen: function () {
+	    this.setState({
+	      visibleMenu: !this.state.visibleMenu
+	    });
+	  },
+
 	  render: function () {
+	    var rottenTomatoesURL = "./rottentomatoes_full.png";
+	    var metascoreURL = "./metacritic_full.png";
 	    return React.createElement(
 	      "div",
 	      { className: "rating-container" },
 	      React.createElement(
-	        "h4",
-	        null,
-	        "sorted by rating"
-	      ),
-	      React.createElement(
 	        "div",
-	        { className: this.props.mobile ? "ui buttons" : "ui vertical buttons" },
+	        { className: this.state.visibleMenu ? "ui fluid labeled icon dropdown button active visible" : "ui fluid labeled icon dropdown button",
+	          onClick: this.onToggleMenuOpen
+	        },
+	        React.createElement("i", { className: "filter icon" }),
 	        React.createElement(
-	          "button",
-	          { className: this.props.ratingOrder === "metascore" ? "ui active button" : "ui button", onClick: this.handleMetaCriticClick },
-	          "Metacritic"
+	          "div",
+	          { className: "item" },
+	          React.createElement("img", { src: this.props.ratingOrder === "metascore" ? metascoreURL : rottenTomatoesURL,
+	            style: { 'width': '75px' }
+	          })
 	        ),
 	        React.createElement(
-	          "button",
-	          { className: this.props.ratingOrder === "tomato_meter" ? "ui active button" : "ui button", onClick: this.handleTomatoClick },
-	          "TomatoMeter"
+	          "div",
+	          { className: this.state.visibleMenu ? "menu transition visible" : "menu transition hidden",
+	            style: { 'width': '130px' }
+	          },
+	          React.createElement(
+	            "div",
+	            { className: "ui item", onClick: this.handleTomatoClick },
+	            React.createElement("img", { className: "ui image",
+	              src: rottenTomatoesURL,
+	              style: { 'width': '100px' }
+	            })
+	          ),
+	          React.createElement(
+	            "div",
+	            { className: "ui item", onClick: this.handleMetaCriticClick },
+	            React.createElement("img", { className: "ui image",
+	              src: metascoreURL,
+	              style: { 'width': '100px' }
+	            })
+	          )
 	        )
 	      )
 	    );
@@ -38820,15 +38948,29 @@
 	module.exports = RatingFilter;
 
 /***/ },
-/* 240 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(2);
-	var SourceCheckbox = __webpack_require__(241);
+	var SourceCheckbox = __webpack_require__(242);
+	var SelectedSource = __webpack_require__(243);
+	var NotSelectedSource = __webpack_require__(244);
+	var onClickOutside = __webpack_require__(188);
 
 	var SourceFilter = React.createClass({
 	  displayName: 'SourceFilter',
 
+	  getInitialState: function () {
+	    return {
+	      menuVisible: false
+	    };
+	  },
+
+	  onMenuToggle: function () {
+	    this.setState({
+	      menuVisible: !this.state.menuVisible
+	    });
+	  },
 
 	  createSources: function () {
 	    this.getInitialState;
@@ -38842,19 +38984,54 @@
 	    }.bind(this));
 	  },
 
+	  selectedSourcesDoesNotInclude: function (value) {
+	    for (var i = 0; i < this.props.selectedSources.length; i++) {
+	      if (this.props.selectedSources[i] === value) {
+	        return false;
+	      };
+	    };
+	    return true;
+	  },
+
 	  render: function () {
+	    var openStyle = "ui fluid dropdown selection multiple active visible";
+	    var closedStyle = "ui fluid dropdown selection multiple";
+	    var selectedSources = this.props.selectedSources.map(function (source, idx) {
+	      return React.createElement(SelectedSource, { source: source,
+	        key: idx + source + "selected",
+	        handleSourceChange: this.props.handleSourceChange
+	      });
+	    }.bind(this));
+
+	    var notSelectedSources = this.props.allSources.filter(this.selectedSourcesDoesNotInclude);
+	    var notSelectedSources = notSelectedSources.map(function (source, idx) {
+	      return React.createElement(NotSelectedSource, { key: idx + source + "not", source: source,
+	        handleSourceChange: this.props.handleSourceChange,
+	        onMenuToggle: this.onMenuToggle
+	      });
+	    }.bind(this));
+
 	    return React.createElement(
 	      'div',
 	      { className: 'source-filter' },
 	      React.createElement(
 	        'div',
-	        { className: 'ui relaxed horizontal divided list' },
+	        {
+	          className: this.state.menuVisible ? openStyle : closedStyle,
+	          tabIndex: '0'
+	        },
+	        React.createElement('i', { className: 'dropdown icon', onClick: this.onMenuToggle }),
 	        React.createElement(
-	          'h4',
-	          null,
-	          'Sources'
+	          'div',
+	          { className: 'selected-items' },
+	          selectedSources
 	        ),
-	        this.props.allSources.length > 0 ? this.createSources() : null
+	        React.createElement(
+	          'div',
+	          { className: this.state.menuVisible ? "menu transition visible" : "menu transition hidden"
+	          },
+	          notSelectedSources
+	        )
 	      )
 	    );
 	  }
@@ -38863,7 +39040,7 @@
 	module.exports = SourceFilter;
 
 /***/ },
-/* 241 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(2);
@@ -38906,7 +39083,61 @@
 	module.exports = SourceCheckbox;
 
 /***/ },
-/* 242 */
+/* 243 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(2);
+
+	var SelectedSource = React.createClass({
+	  displayName: 'SelectedSource',
+
+	  onDeleteIconClick: function () {
+	    this.props.handleSourceChange(this.props.source);
+	  },
+
+	  render: function () {
+	    return React.createElement(
+	      'a',
+	      { className: 'ui label transition visible', style: { 'display': 'inline-block' } },
+	      this.props.source,
+	      React.createElement('i', {
+	        className: 'delete icon',
+	        onClick: this.onDeleteIconClick
+	      })
+	    );
+	  }
+	});
+
+	module.exports = SelectedSource;
+
+/***/ },
+/* 244 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(2);
+
+	var NotSelectedSource = React.createClass({
+	  displayName: "NotSelectedSource",
+
+
+	  onAddSourceClick: function () {
+	    this.props.handleSourceChange(this.props.source);
+	    this.props.onMenuToggle();
+	  },
+
+	  render: function () {
+	    return React.createElement(
+	      "div",
+	      { className: "item", onClick: this.onAddSourceClick },
+	      this.props.source
+	    );
+	  }
+	});
+
+	module.exports = NotSelectedSource;
+
+/***/ },
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(2);
@@ -38947,7 +39178,7 @@
 	module.exports = TitleSearch;
 
 /***/ },
-/* 243 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -55558,10 +55789,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(244)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(247)(module)))
 
 /***/ },
-/* 244 */
+/* 247 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
