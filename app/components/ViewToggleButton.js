@@ -1,0 +1,23 @@
+var React = require('react');
+
+var ViewToggleButton = React.createClass({
+
+  onViewChange: function(){
+    this.props.handleViewChange();
+  },
+
+
+
+  render: function(){
+    debugger
+    return (
+      <button className = "ui primary button view"
+        style={{'position': 'fixed', 'right': '0','margin-right': '20px'}}
+        onClick={this.onViewChange}>
+          {this.props.itemView ? "Grid View" : "Item view"}
+      </button>
+    )
+  }
+});
+
+module.exports = ViewToggleButton;
