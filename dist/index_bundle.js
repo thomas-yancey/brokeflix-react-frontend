@@ -21377,18 +21377,18 @@
 
 	  render: function () {
 	    var wideMenuStyle = { 'position': 'fixed',
-	      'overflow-y': 'scroll',
+	      'overflowY': 'scroll',
 	      'width': '250px',
 	      'height': '100%',
 	      'left': '0',
-	      'padding-left': '20px',
-	      'margin-bottom': '50px' };
+	      'paddingLeft': '20px',
+	      'marginBottom': '50px' };
 	    var smallMenuStyle = { 'position': 'fixed',
-	      'overflow-y': 'scroll',
+	      'overflowY': 'scroll',
 	      'width': '190px',
 	      'left': '0',
-	      'padding-left': '20px',
-	      'padding-bottom': '150px',
+	      'paddingLeft': '20px',
+	      'paddingBottom': '150px',
 	      'height': '100%' };
 	    var mobileMenuStyle = {};
 	    menuStyle = "";
@@ -21453,7 +21453,7 @@
 	          { className: this.mobile ? "row" : "right floating thirteen wide column" },
 	          React.createElement('img', { className: 'ui centered image', src: './horizontal_loading.gif',
 	            style: this.state.loading ? { 'margin': '0 auto',
-	              'margin-bottom': '60px' } : { 'display': 'none' }
+	              'marginBottom': '60px' } : { 'display': 'none' }
 	          })
 	        )
 	      )
@@ -32613,7 +32613,7 @@
 
 	  render: function () {
 	    var sources = this.props.movie.sources.map(function (source, idx) {
-	      return React.createElement(Source, { source: source, idx: idx });
+	      return React.createElement(Source, { key: idx + source + 1, source: source, idx: idx });
 	    });
 
 	    var hasTrailer = this.hasTrailer();
@@ -32621,7 +32621,7 @@
 	    return React.createElement(
 	      'div',
 	      { className: 'left aligned content',
-	        style: this.props.mobile ? { 'padding-left': '20px', 'padding-right': '20px' } : null
+	        style: this.props.mobile ? { 'paddingLeft': '20px', 'paddingRight': '20px' } : null
 	      },
 	      React.createElement(
 	        'h2',
@@ -32696,8 +32696,8 @@
 	        'div',
 	        { className: 'embed-container' },
 	        React.createElement('iframe', { src: youtubeURL,
-	          frameborder: '0',
-	          allowfullscreen: true })
+	          frameBorder: '0',
+	          allowFullScreen: true })
 	      )
 	    );
 	  }
@@ -33890,7 +33890,10 @@
 	    return React.createElement(
 	      'button',
 	      { className: 'ui primary button view',
-	        style: { 'position': 'fixed', 'right': '0', 'margin-right': '20px' },
+	        style: { 'position': 'fixed',
+	          'right': '0',
+	          'marginRight': '20px'
+	        },
 	        onClick: this.onViewChange },
 	      this.props.itemView ? "Grid View" : "Item view"
 	    );
@@ -33920,12 +33923,13 @@
 	        style: this.props.scrollTopVisible ? { 'position': 'fixed',
 	          'right': '0',
 	          'top': '0',
-	          'margin-top': '70px',
-	          'margin-right': '10px' } : { 'display': 'none' },
+	          'marginTop': '70px',
+	          'marginRight': '10px' } : { 'display': 'none' },
 	        onClick: this.onScrollTop
 	      },
 	      React.createElement('img', { src: './scroll_top.png',
-	        style: { 'width': '50px', 'height': 'auto' }
+	        style: { 'width': '50px',
+	          'height': 'auto' }
 	      })
 	    );
 	  }

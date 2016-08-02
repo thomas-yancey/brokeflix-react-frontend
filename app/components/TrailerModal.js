@@ -8,7 +8,7 @@ var TrailerModal = onClickOutside(React.createClass({
   },
 
   render(){
-    var youtubeURL = "http://www.youtube.com/embed/" + this.props.youtubeKey + "?autoplay=1";
+    var youtubeURL = "https://www.youtube.com/embed/" + this.props.youtubeKey + "?autoplay=1";
     return (
       <div className="ui active modal">
         <div className='embed-container'>
