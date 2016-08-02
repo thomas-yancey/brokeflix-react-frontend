@@ -1,31 +1,34 @@
 var React = require('react');
 var Movies = require('./Movies');
-var PaginationLinks = require('./PaginationLinks')
+var PaginationLinks = require('./PaginationLinks');
+var ViewToggleButton = require('./ViewToggleButton');
+var ScrollTopButton = require('./ScrollTopButton');
 
 var MainContainer = React.createClass({
 
-  onViewChange: function(){
-    this.props.handleViewChange();
-  },
-
   render: function(){
+
+    var userButton;
+    if (this.props.mobile){
+      userButton = (<ScrollTopButton
+        scrollTopVisible={this.props.scrollTopVisible}
+        handleScrollTop={this.props.handleScrollTop}
+      />)
+    } else {
+      userButton = (
+        <ViewToggleButton
+          itemView={this.props.itemView}
+          handleViewChange={this.props.handleViewChange}
+        />
+      )
+    };
+
     return (
       <div className={this.props.mobile ?
         "main-container-mobile" :
         "main-container"}
         >
-        <button
-          className={this.props.mobile ?
-            "tooltip" :
-            "ui primary button"
-          }
-          style={{'position': 'fixed', 'right': '0','margin-right': '20px'}}
-          onClick={this.onViewChange}>
-            {this.props.itemView ?
-              "Grid View" :
-              "Item view"
-            }
-        </button>
+        {userButton}
         <Movies
            movies={this.props.movies}
            gridLength={this.props.gridLength}

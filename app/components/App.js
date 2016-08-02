@@ -9,6 +9,7 @@ var MainContainer = require('./MainContainer');
 var FilterContainer = require('./FilterContainer');
 var YearFilter = require('./YearFilter');
 var Rcslider = require('rc-slider');
+var ScrollTopButton = require('./ScrollTopButton');
 var _ = require('lodash');
 var $ = require('jquery');
 
@@ -30,24 +31,33 @@ var App = React.createClass({
       titleSearch: "",
       mobile: true,
       itemView: true,
-      gridLength: 4
+      gridLength: 4,
+      loading: false,
+      scrollTopVisible: false,
+      loading: true
     })
   },
 
   componentWillMount: function(){
     window.addEventListener("resize", this.updateDimensions);
-    window.addEventListener('scroll', this.handleScroll);
-    this.debounceGetMoviesFromServer = _.debounce(this.getMoviesFromServer,500);
-    this.debounceInfiniteScroll = _.debounce(this.infininiteScrollFromServer,500);
+    this.debounceScrollTopVisible = _.debounce(this.scrollTopVisible,100);
+    if (this.props.mobile){
+      window.addEventListener('scroll', this.debounceScrollTopVisible);
+    }
+    this.debounceGetMoviesFromServer = _.debounce(this.getMoviesFromServer,200);
   },
 
   componentDidMount: function(){
+    window.addEventListener('scroll', this.handleScroll);
     this.InitialGetSourcesAndMovies();
     this.updateDimensions();
+    this.debounceInfiniteScroll = _.debounce(this.infininiteScrollFromServer,1000);
   },
 
   getMoviesFromServer: function(){
-
+    this.setState({
+      loading: true
+    });
     var params = {
       page: this.state.current_page,
       start_year: this.state.startYear,
@@ -59,7 +69,7 @@ var App = React.createClass({
       selectedSources: this.state.selectedSources,
       title_search: this.state.titleSearch
     };
-    var currURL = "http://brokeflix.herokuapp,com/movies?" + $.param(params)
+    var currURL = "https://brokeflix.herokuapp.com/movies?" + $.param(params)
     $.ajax({
       url: currURL,
       dataType: "json",
@@ -70,12 +80,16 @@ var App = React.createClass({
         movies: data.movies,
         current_page: data.current_page,
         total_pages: data.total_pages,
-        total_entries: data.total_entries
+        total_entries: data.total_entries,
+        loading: false
       })
     }.bind(this))
   },
 
   infininiteScrollFromServer: function(){
+    this.setState({
+      loading: true
+    });
     var params = {
       page: this.state.current_page + 1,
       start_year: this.state.startYear,
@@ -87,7 +101,7 @@ var App = React.createClass({
       selectedSources: this.state.selectedSources,
       title_search: this.state.titleSearch
     };
-    var currURL = "http://brokeflix.herokuapp,com/movies?" + $.param(params)
+    var currURL = "https://brokeflix.herokuapp.com/movies?" + $.param(params)
     $.ajax({
       url: currURL,
       dataType: "json",
@@ -98,13 +112,14 @@ var App = React.createClass({
         movies: this.state.movies.concat(data.movies),
         current_page: data.current_page,
         total_pages: data.total_pages,
-        total_entries: data.total_entries
+        total_entries: data.total_entries,
+        loading: false
       })
     }.bind(this))
   },
 
   InitialGetSourcesAndMovies: function(){
-    var currURL = "http://brokeflix.herokuapp,com/sources"
+    var currURL = "https://brokeflix.herokuapp.com/sources"
     $.ajax({
       url: currURL,
       dataType: "json",
@@ -122,8 +137,14 @@ var App = React.createClass({
   },
 
   handleScroll: function(){
+    // debounce scroll if at the bottom
+    this.infiniteScrollCall();
+    this.debounceScrollTopVisible();
+  },
+
+  infiniteScrollCall: function(){
     $(window).scroll(function() {
-     if($(window).scrollTop() + $(window).height() == $(document).height()) {
+     if($(window).scrollTop() + $(window).height() >= $(document).height() - 200) {
          this.debounceInfiniteScroll();
        }
     }.bind(this));
@@ -144,7 +165,6 @@ var App = React.createClass({
     if ($(window).width() >= 800) {
       this.setState({
         mobile: false,
-        itemView: false
       })
     };
   },
@@ -171,6 +191,26 @@ var App = React.createClass({
     this.setState({
       itemView: !this.state.itemView
     });
+  },
+
+  handleScrollTop: function(){
+    $('html,body').scrollTop(0);
+    this.setState({
+      scrollTopVisible: false
+    });
+  },
+
+  scrollTopVisible: function(){
+    var height = $(window).scrollTop();
+    if (height > 430){
+      this.setState({
+        scrollTopVisible: true
+      })
+    } else if (height < 430){
+      this.setState({
+        scrollTopVisible: false
+      })
+    };
   },
 
   selectedSourcesContains: function(value){
@@ -240,18 +280,18 @@ var App = React.createClass({
 
   render: function(){
     var wideMenuStyle = {'position': 'fixed',
-                         'overflow-y': 'scroll',
+                         'overflowY': 'scroll',
                          'width': '250px',
                          'height': '100%',
                          'left': '0',
-                         'padding-left': '20px',
-                         'margin-bottom': '50px'};
+                         'paddingLeft': '20px',
+                         'marginBottom': '50px'};
     var smallMenuStyle = {'position': 'fixed',
-                          'overflow-y': 'scroll',
-                          'width': '220px',
+                          'overflowY': 'scroll',
+                          'width': '190px',
                           'left': '0',
-                          'padding-left': '20px',
-                          'padding-bottom': '150px',
+                          'paddingLeft': '20px',
+                          'paddingBottom': '150px',
                           'height': '100%'};
     var mobileMenuStyle = {};
     menuStyle = "";
@@ -297,7 +337,20 @@ var App = React.createClass({
                mobile={this.state.mobile}
                handleViewChange={this.handleViewChange}
                gridLength={this.state.gridLength}
+               scrollTopVisible={this.state.scrollTopVisible}
+               handleScrollTop={this.handleScrollTop}
              />
+          </div>
+          <div className={this.props.mobile ? null : "three wide column" }>
+          </div>
+          <div className={this.mobile ? "row" : "right floating thirteen wide column"}>
+            <img className="ui centered image" src="./horizontal_loading.gif"
+              style={this.state.loading ?
+                {'margin': '0 auto',
+                'marginBottom': '60px'} :
+                {'display': 'none'}
+              }
+            />
           </div>
         </div>
       </div>

@@ -29,14 +29,14 @@ var MovieInfo = React.createClass({
 
   render: function(){
     var sources = this.props.movie.sources.map(function(source, idx){
-      return (<Source source={source} idx={idx}/>)
+      return (<Source key={idx + source + 1} source={source} idx={idx}/>)
     });
 
     var hasTrailer = this.hasTrailer();
 
     return (
-      <div className="middle center aligned content"
-        style={this.props.mobile ? {'padding-left': '20px', 'padding-right': '20px'} : null}
+      <div className="left aligned content"
+        style={this.props.mobile ? {'paddingLeft': '20px', 'paddingRight': '20px'} : null}
       >
         <h2>
           {this.props.movie.title}

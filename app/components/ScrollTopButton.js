@@ -13,14 +13,15 @@ var ScrollTopButton = React.createClass({
             {'position': 'fixed',
               'right': '0',
               'top': '0',
-              'margin-top': '70px',
-              'margin-right': '40px'} :
+              'marginTop': '70px',
+              'marginRight': '10px'} :
             {'display': 'none'}
           }
           onClick={this.onScrollTop}
         >
         <img src="./scroll_top.png"
-          style={{'width': '50px', 'height': 'auto'}}
+          style={{'width': '50px',
+          'height': 'auto'}}
         />
       </div>
     )

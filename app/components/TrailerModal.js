@@ -13,8 +13,8 @@ var TrailerModal = onClickOutside(React.createClass({
       <div className="ui active modal">
         <div className='embed-container'>
           <iframe src={youtubeURL}
-            frameborder='0'
-            allowfullscreen>
+            frameBorder='0'
+            allowFullScreen>
           </iframe>
         </div>
       </div>
