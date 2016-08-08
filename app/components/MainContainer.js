@@ -34,6 +34,7 @@ var MainContainer = React.createClass({
            gridLength={this.props.gridLength}
            mobile={this.props.mobile}
            itemView={this.props.itemView}
+           rating={this.props.rating}
          />
       </div>
     )

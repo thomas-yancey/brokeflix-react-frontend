@@ -12,6 +12,8 @@ var Rcslider = require('rc-slider');
 var ScrollTopButton = require('./ScrollTopButton');
 var _ = require('lodash');
 var $ = require('jquery');
+var DEV = "http://localhost:3000"
+var PRODUCTION = "https://brokeflix.herokuapp.com"
 
 var App = React.createClass({
   getInitialState: function(){
@@ -29,8 +31,8 @@ var App = React.createClass({
       allSources: [],
       selectedSources: [],
       titleSearch: "",
-      mobile: true,
-      itemView: true,
+      mobile: false,
+      itemView: false,
       gridLength: 4,
       loading: false,
       scrollTopVisible: false,
@@ -69,7 +71,7 @@ var App = React.createClass({
       selectedSources: this.state.selectedSources,
       title_search: this.state.titleSearch
     };
-    var currURL = "https://brokeflix.herokuapp.com/movies?" + $.param(params)
+    var currURL = PRODUCTION + "/movies?" + $.param(params)
     $.ajax({
       url: currURL,
       dataType: "json",
@@ -87,6 +89,9 @@ var App = React.createClass({
   },
 
   infininiteScrollFromServer: function(){
+    if (this.state.current_page == this.state.total_pages){
+      return;
+    }
     this.setState({
       loading: true
     });
@@ -101,7 +106,7 @@ var App = React.createClass({
       selectedSources: this.state.selectedSources,
       title_search: this.state.titleSearch
     };
-    var currURL = "https://brokeflix.herokuapp.com/movies?" + $.param(params)
+    var currURL = PRODUCTION + "/movies?" + $.param(params)
     $.ajax({
       url: currURL,
       dataType: "json",
@@ -119,7 +124,7 @@ var App = React.createClass({
   },
 
   InitialGetSourcesAndMovies: function(){
-    var currURL = "https://brokeflix.herokuapp.com/sources"
+    var currURL = PRODUCTION + "/sources"
     $.ajax({
       url: currURL,
       dataType: "json",
@@ -329,6 +334,7 @@ var App = React.createClass({
           </div>
           <div className={this.state.mobile ? "row" : "thirteen wide right floated column"}>
             <MainContainer movies={this.state.movies}
+               rating={this.state.rating}
                current_page={this.state.current_page}
                total_pages={this.state.total_pages}
                total_entries={this.state.total_entries}

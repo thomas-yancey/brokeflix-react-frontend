@@ -1,7 +1,7 @@
 var React = require('react');
 
 
-var TitleSearch = React.createClass({
+var Search = React.createClass({
 
   getDefaultProps: function(){
     titleSearch: "";
@@ -20,7 +20,7 @@ var TitleSearch = React.createClass({
       <div className="title-search-container">
         <div className={this.props.mobile ? "ui fluid input" : "ui fluid input" }>
           <input type="text"
-            placeholder="Title search"
+            placeholder="title, actor or director"
             onChange={this.onTextChange}
             value={this.props.titleSearch}
           />
@@ -30,4 +30,4 @@ var TitleSearch = React.createClass({
   }
 });
 
-module.exports = TitleSearch;
+module.exports = Search;

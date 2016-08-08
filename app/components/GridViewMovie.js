@@ -76,6 +76,7 @@ var GridViewMovie = React.createClass({
     if (this.isbottomLevelToolTip()){
       toolTipStyle = "tooltip-active-up"
     };
+
     var showingTrailer = "";
     if (this.state.visibleTrailer){
       showingTrailer = (
@@ -85,16 +86,40 @@ var GridViewMovie = React.createClass({
         />
       )
     };
+
+    var ratingBySource = "";
+    if (this.props.rating === "metascore"){
+      ratingBySource = this.props.movie.metascore
+    } else {
+      ratingBySource = this.props.movie.tomato_meter
+    };
+
     return (
-        <div className="ui rounded image" style={{'width': '200px','padding': '5px'}}>
+        <div className="ui rounded image"
+          style={{'width': '200px','padding': '5px'}}
+        >
           <div
             onMouseEnter={this.handleMouseEnter}
             onMouseLeave={this.handleMouseLeave}
             onClick={this.handleMovieClick}
           >
-            <img src={this.props.movie.poster}
-              className={this.state.hover ? "entered-poster" : ""}
-              />
+            <div className="grid-poster">
+              <img src={this.props.movie.poster}
+                className={this.state.hover ? "entered-poster" : ""}
+                />
+              <div className="ui image"
+                style={{'display': 'inline',
+                        'position': 'relative',
+                        'bottom': '270px',
+                        'left': '190px',
+                        'height': '0px',
+                      }}
+                >
+                <a className="ui red right ribbon label">
+                  {ratingBySource}
+                </a>
+              </div>
+            </div>
             <div className={this.state.hover ? toolTipStyle : "tooltip"}>
               <div className="ui segment">
                 <MovieInfo movie={this.props.movie}

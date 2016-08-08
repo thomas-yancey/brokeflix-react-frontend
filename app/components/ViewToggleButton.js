@@ -9,7 +9,6 @@ var ViewToggleButton = React.createClass({
 
 
   render: function(){
-    debugger
     return (
       <button className = "ui primary button view"
         style={{'position': 'fixed',

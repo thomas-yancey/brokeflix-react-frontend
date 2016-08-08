@@ -5,7 +5,7 @@ var Nav = React.createClass({
     return(
     <div className="ui inverted fixed main menu">
       <div className="ui container nav-menu">
-        <div className="item">BrokeFlix</div>
+        <div className="header item">BrokeFlix</div>
       </div>
     </div>
     )

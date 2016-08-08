@@ -21107,6 +21107,8 @@
 	var ScrollTopButton = __webpack_require__(196);
 	var _ = __webpack_require__(247);
 	var $ = __webpack_require__(174);
+	var DEV = "http://localhost:3000";
+	var PRODUCTION = "https://brokeflix.herokuapp.com";
 
 	var App = React.createClass({
 	  displayName: 'App',
@@ -21126,8 +21128,8 @@
 	      allSources: [],
 	      selectedSources: [],
 	      titleSearch: "",
-	      mobile: true,
-	      itemView: true,
+	      mobile: false,
+	      itemView: false,
 	      gridLength: 4,
 	      loading: false,
 	      scrollTopVisible: false,
@@ -21166,7 +21168,7 @@
 	      selectedSources: this.state.selectedSources,
 	      title_search: this.state.titleSearch
 	    };
-	    var currURL = "https://brokeflix.herokuapp.com/movies?" + $.param(params);
+	    var currURL = PRODUCTION + "/movies?" + $.param(params);
 	    $.ajax({
 	      url: currURL,
 	      dataType: "json",
@@ -21184,6 +21186,9 @@
 	  },
 
 	  infininiteScrollFromServer: function () {
+	    if (this.state.current_page == this.state.total_pages) {
+	      return;
+	    }
 	    this.setState({
 	      loading: true
 	    });
@@ -21198,7 +21203,7 @@
 	      selectedSources: this.state.selectedSources,
 	      title_search: this.state.titleSearch
 	    };
-	    var currURL = "https://brokeflix.herokuapp.com/movies?" + $.param(params);
+	    var currURL = PRODUCTION + "/movies?" + $.param(params);
 	    $.ajax({
 	      url: currURL,
 	      dataType: "json",
@@ -21216,7 +21221,7 @@
 	  },
 
 	  InitialGetSourcesAndMovies: function () {
-	    var currURL = "https://brokeflix.herokuapp.com/sources";
+	    var currURL = PRODUCTION + "/sources";
 	    $.ajax({
 	      url: currURL,
 	      dataType: "json",
@@ -32397,7 +32402,7 @@
 	        { className: "ui container nav-menu" },
 	        React.createElement(
 	          "div",
-	          { className: "item" },
+	          { className: "header item" },
 	          "BrokeFlix"
 	        )
 	      )
@@ -32688,7 +32693,7 @@
 	  },
 
 	  render() {
-	    var youtubeURL = "http://www.youtube.com/embed/" + this.props.youtubeKey + "?autoplay=1";
+	    var youtubeURL = "https://www.youtube.com/embed/" + this.props.youtubeKey + "?autoplay=1";
 	    return React.createElement(
 	      'div',
 	      { className: 'ui active modal' },
@@ -33886,7 +33891,6 @@
 	  },
 
 	  render: function () {
-	    debugger;
 	    return React.createElement(
 	      'button',
 	      { className: 'ui primary button view',
@@ -33945,7 +33949,7 @@
 	var YearFilter = __webpack_require__(198);
 	var RatingFilter = __webpack_require__(242);
 	var SourceFilter = __webpack_require__(243);
-	var TitleSearch = __webpack_require__(246);
+	var Search = __webpack_require__(246);
 
 	var FilterContainer = React.createClass({
 	  displayName: 'FilterContainer',
@@ -33972,7 +33976,7 @@
 	        { className: 'ui horizontal divider header' },
 	        'search'
 	      ),
-	      React.createElement(TitleSearch, {
+	      React.createElement(Search, {
 	        titleSearch: this.props.titleSearch,
 	        handleTitleSearchChange: this.props.handleTitleSearchChange,
 	        getMoviesFromServer: this.props.getMoviesFromServer,
@@ -39235,8 +39239,8 @@
 
 	var React = __webpack_require__(2);
 
-	var TitleSearch = React.createClass({
-	  displayName: "TitleSearch",
+	var Search = React.createClass({
+	  displayName: "Search",
 
 
 	  getDefaultProps: function () {
@@ -39259,7 +39263,7 @@
 	        "div",
 	        { className: this.props.mobile ? "ui fluid input" : "ui fluid input" },
 	        React.createElement("input", { type: "text",
-	          placeholder: "Title search",
+	          placeholder: "title, actor or director",
 	          onChange: this.onTextChange,
 	          value: this.props.titleSearch
 	        })
@@ -39268,7 +39272,7 @@
 	  }
 	});
 
-	module.exports = TitleSearch;
+	module.exports = Search;
 
 /***/ },
 /* 247 */

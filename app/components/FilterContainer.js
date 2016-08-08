@@ -2,7 +2,7 @@ var React = require('react');
 var YearFilter = require('./YearFilter')
 var RatingFilter = require('./RatingFilter')
 var SourceFilter = require('./SourceFilter')
-var TitleSearch = require('./TitleSearch')
+var Search = require('./Search')
 
 var FilterContainer = React.createClass({
   render: function(){
@@ -25,7 +25,7 @@ var FilterContainer = React.createClass({
         <h4 className="ui horizontal divider header">
           search
         </h4>
-        <TitleSearch
+        <Search
           titleSearch={this.props.titleSearch}
           handleTitleSearchChange={this.props.handleTitleSearchChange}
           getMoviesFromServer={this.props.getMoviesFromServer}

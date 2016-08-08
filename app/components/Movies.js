@@ -22,8 +22,10 @@ var Movies = React.createClass({
               itemIdx={idx}
               movieCount={this.props.movies.length}
               movie={currMovie}
+              rating={this.props.rating}
               rightMost={((idx + 1) % this.props.gridLength === 0)}
               gridLength={this.props.gridLength}
+              rating={this.props.rating}
             />
           )
         }
