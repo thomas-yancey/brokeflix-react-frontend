@@ -1,11 +1,11 @@
-var React = require('react');
-var MovieInfo = require('./MovieInfo');
-var ToolTip = require('react-portal-tooltip');
-var TrailerModal = require('./TrailerModal');
+const React = require('react');
+const MovieInfo = require('./MovieInfo');
+const ToolTip = require('react-portal-tooltip');
+const TrailerModal = require('./TrailerModal');
 
-var GridViewMovie = React.createClass({
+const GridViewMovie = React.createClass({
 
-  getInitialState: function(){
+  getInitialState () {
     return ({
       hover: false,
       clicked: false,
@@ -13,37 +13,37 @@ var GridViewMovie = React.createClass({
     })
   },
 
-  onClickOutside: function(evt){
+  onClickOutside (evt) {
     this.setState({
       visibleTrailer: false
     })
   },
 
-  viewTrailer: function(){
+  viewTrailer () {
     this.setState({
       visibleTrailer: true
     })
   },
 
-  handleMouseEnter: function(){
+  handleMouseEnter () {
     this.setState({
       hover: true
     })
   },
 
-  handleMouseLeave: function(){
+  handleMouseLeave () {
     this.setState({
       hover: false
     })
   },
 
-  handleMovieClick: function(){
+  handleMovieClick () {
     this.setState({
       clicked: true
     })
   },
 
-  rightOrLeftToolTipStyle: function(){
+  rightOrLeftToolTipStyle () {
     if (this.props.rightMost){
       return "tooltip-active-right"
     } else {
@@ -51,11 +51,11 @@ var GridViewMovie = React.createClass({
     }
   },
 
-  isbottomLevelToolTip: function(idx){
+  isbottomLevelToolTip (idx) {
     if (this.props.movieCount < 5){
       return false
     };
-    var positionLast = this.props.movieCount - (this.props.itemIdx)
+    let positionLast = this.props.movieCount - (this.props.itemIdx)
     if (positionLast < (this.props.gridLength + 1)){
       if (this.props.movieCount % this.props.gridLength === 0){
         return true
@@ -71,13 +71,14 @@ var GridViewMovie = React.createClass({
     return false
   },
 
-  render: function(){
-    var toolTipStyle = this.rightOrLeftToolTipStyle();
+  render () {
+
+    let toolTipStyle = this.rightOrLeftToolTipStyle();
     if (this.isbottomLevelToolTip()){
       toolTipStyle = "tooltip-active-up"
     };
 
-    var showingTrailer = "";
+    let showingTrailer = "";
     if (this.state.visibleTrailer){
       showingTrailer = (
         <TrailerModal
@@ -87,50 +88,48 @@ var GridViewMovie = React.createClass({
       )
     };
 
-    var ratingBySource = "";
+    let ratingBySource = "";
     if (this.props.rating === "metascore"){
       ratingBySource = this.props.movie.metascore
     } else {
       ratingBySource = this.props.movie.tomato_meter
     };
+
     return (
-        <div className="ui rounded image"
-          style={{'width': '200px','padding': '5px'}}
+      <div className="ui rounded image" style={{'width': '200px','padding': '5px'}}>
+        <div onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
+          onClick={this.handleMovieClick}
         >
-          <div
-            onMouseEnter={this.handleMouseEnter}
-            onMouseLeave={this.handleMouseLeave}
-            onClick={this.handleMovieClick}
-          >
-            <div className="grid-poster">
-              <img src={this.props.movie.poster}
-                className={this.state.hover ? "entered-poster" : ""}
-                />
-              <div className="ui image"
-                style={{'display': 'inline',
-                        'position': 'relative',
-                        'bottom': '270px',
-                        'left': '190px',
-                        'height': '0px',
-                      }}
-                >
-                <a className="ui red right ribbon label">
-                  {ratingBySource}
-                </a>
-              </div>
-            </div>
-            <div className={this.state.hover ? toolTipStyle : "tooltip"}>
-              <div className="ui segment">
-                <MovieInfo movie={this.props.movie}
-                  closeModal={this.closeModal}
-                  viewTrailer={this.viewTrailer}
-                  visibleTrailer={this.state.visibleTrailer}
-                />
-              </div>
+          <div className="grid-poster">
+            <img src={this.props.movie.poster}
+              className={this.state.hover ? "entered-poster" : ""}
+            />
+            <div className="ui image"
+              style={{'display': 'inline',
+                  'position': 'relative',
+                  'bottom': '270px',
+                  'left': '190px',
+                  'height': '0px',
+                }}
+              >
+              <a className="ui red right ribbon label">
+                {ratingBySource}
+              </a>
             </div>
           </div>
-          {showingTrailer}
+          <div className={this.state.hover ? toolTipStyle : "tooltip"}>
+            <div className="ui segment">
+              <MovieInfo movie={this.props.movie}
+                closeModal={this.closeModal}
+                viewTrailer={this.viewTrailer}
+                visibleTrailer={this.state.visibleTrailer}
+              />
+            </div>
+          </div>
         </div>
+        {showingTrailer}
+      </div>
     )
   }
 })

@@ -1,14 +1,14 @@
-var React = require('react');
-var onClickOutside = require('react-onclickoutside');
+const React = require('react');
+const onClickOutside = require('react-onclickoutside');
 
-var TrailerModal = onClickOutside(React.createClass({
+const TrailerModal = onClickOutside(React.createClass({
 
-  handleClickOutside: function(evt) {
+  handleClickOutside (evt) {
     this.props.onClickOutside(evt);
   },
 
-  render(){
-    var youtubeURL = "https://www.youtube.com/embed/" + this.props.youtubeKey + "?autoplay=1";
+  render () {
+    let youtubeURL = "https://www.youtube.com/embed/" + this.props.youtubeKey + "?autoplay=1";
     return (
       <div className="ui active modal">
         <div className='embed-container'>

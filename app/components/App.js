@@ -13,9 +13,23 @@ const ScrollTopButton = require('./ScrollTopButton');
 const _ = require('lodash');
 const DEV = "http://localhost:3000"
 const PRODUCTION = "https://brokeflix.herokuapp.com"
+const wideMenuStyle = {'position': 'fixed',
+                     'overflowY': 'scroll',
+                     'width': '250px',
+                     'height': '100%',
+                     'left': '0',
+                     'paddingLeft': '20px',
+                     'marginBottom': '50px'};
+const smallMenuStyle = {'position': 'fixed',
+                      'overflowY': 'scroll',
+                      'width': '190px',
+                      'left': '0',
+                      'paddingLeft': '20px',
+                      'paddingBottom': '150px',
+                      'height': '100%'};
 
 const App = React.createClass({
-  getInitialState: function(){
+  getInitialState () {
     return ({
       movies: {},
       current_page: 1,
@@ -221,9 +235,9 @@ const App = React.createClass({
   },
 
   removeUncheckedSource (source) {
-    return this.state.selectedSources.filter(function(curr_source){
+    return this.state.selectedSources.filter((curr_source) => {
       return source !== curr_source
-    }.bind(this));
+    });
   },
 
   handleTitleSearchChange (search) {
@@ -277,22 +291,9 @@ const App = React.createClass({
   },
 
   render () {
-    const wideMenuStyle = {'position': 'fixed',
-                         'overflowY': 'scroll',
-                         'width': '250px',
-                         'height': '100%',
-                         'left': '0',
-                         'paddingLeft': '20px',
-                         'marginBottom': '50px'};
-    const smallMenuStyle = {'position': 'fixed',
-                          'overflowY': 'scroll',
-                          'width': '190px',
-                          'left': '0',
-                          'paddingLeft': '20px',
-                          'paddingBottom': '150px',
-                          'height': '100%'};
+
     let mobileMenuStyle = {};
-    menuStyle = "";
+    let menuStyle;
 
     if (this.state.gridLength > 3){
       menuStyle = wideMenuStyle;

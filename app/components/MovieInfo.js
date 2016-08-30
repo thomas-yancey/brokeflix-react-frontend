@@ -1,38 +1,38 @@
-var React = require('react');
-var TrailerModal = require('./TrailerModal');
-var RatingContainer = require('./RatingContainer');
-var Source = require('./Source');
+const React = require('react');
+const TrailerModal = require('./TrailerModal');
+const RatingContainer = require('./RatingContainer');
+const Source = require('./Source');
 
-var MovieInfo = React.createClass({
-  hasTrailer: function(){
-    if (this.props.movie.trailer){
-      return (
-            <div className="ui red button"
-              onClick={this.onClickViewTrailer}
-              href={this.props.movie.trailer}
-              style={{'display': 'inline'}}
-            >
-              View Trailer
-            </div>
-        )
-    };
-  },
+const MovieInfo = React.createClass({
 
-  onClickViewTrailer: function(e){
+  onClickViewTrailer (e) {
     e.preventDefault();
     this.props.viewTrailer();
   },
 
-  onCloseModal: function(){
+  onCloseModal () {
     this.props.closeModal();
   },
 
-  render: function(){
-    var sources = this.props.movie.sources.map(function(source, idx){
+  render () {
+
+    let sources = this.props.movie.sources.map((source, idx) => {
       return (<Source key={idx + source + 1} source={source} idx={idx}/>)
     });
 
-    var hasTrailer = this.hasTrailer();
+    let hasTrailer;
+    if (this.props.movie.trailer){
+      hasTrailer = (
+        <div className="ui red button"
+          onClick={this.onClickViewTrailer}
+          href={this.props.movie.trailer}
+          style={{'display': 'inline'}}
+        >
+          View Trailer
+        </div>
+      )
+    };
+
     return (
       <div className="left aligned content"
         style={this.props.mobile ? {'paddingLeft': '20px', 'paddingRight': '20px'} : null}

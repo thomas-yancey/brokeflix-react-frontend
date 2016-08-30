@@ -1,35 +1,37 @@
-var React = require('react');
-var MovieInfo = require('./MovieInfo');
-var TrailerModal = require('./TrailerModal');
+const React = require('react');
+const MovieInfo = require('./MovieInfo');
+const TrailerModal = require('./TrailerModal');
 
-var ItemViewMovie = React.createClass({
-  getInitialState: function(){
+const ItemViewMovie = React.createClass({
+  getInitialState () {
     return ({
       hover: false,
       visibleTrailer: false
     })
   },
 
-  onClickOutside: function(evt){
+  onClickOutside (evt) {
     this.setState({
       visibleTrailer: false
     })
   },
 
-  viewTrailer: function(){
+  viewTrailer () {
     this.setState({
       visibleTrailer: true
     })
   },
 
-  render: function(){
+  render () {
 
-    var showingTrailer = "";
+    let showingTrailer;
     if (this.state.visibleTrailer){
-      showingTrailer = (<TrailerModal
-                          youtubeKey={this.props.movie.trailer}
-                          onClickOutside={this.onClickOutside}
-                        />)
+      showingTrailer = (
+        <TrailerModal
+        youtubeKey={this.props.movie.trailer}
+        onClickOutside={this.onClickOutside}
+        />
+      )
     };
 
     return (
