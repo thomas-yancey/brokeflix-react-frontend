@@ -21440,6 +21440,7 @@
 	          'div',
 	          { className: this.state.mobile ? "row" : "thirteen wide right floated column" },
 	          React.createElement(MainContainer, { movies: this.state.movies,
+	            rating: this.state.rating,
 	            current_page: this.state.current_page,
 	            total_pages: this.state.total_pages,
 	            total_entries: this.state.total_entries,
@@ -32500,8 +32501,10 @@
 	            itemIdx: idx,
 	            movieCount: this.props.movies.length,
 	            movie: currMovie,
+	            rating: this.props.rating,
 	            rightMost: (idx + 1) % this.props.gridLength === 0,
-	            gridLength: this.props.gridLength
+	            gridLength: this.props.gridLength,
+	            rating: this.props.rating
 	          });
 	        }
 	      }.bind(this));
@@ -33130,6 +33133,7 @@
 	    if (this.isbottomLevelToolTip()) {
 	      toolTipStyle = "tooltip-active-up";
 	    };
+
 	    var showingTrailer = "";
 	    if (this.state.visibleTrailer) {
 	      showingTrailer = React.createElement(TrailerModal, {
@@ -33137,9 +33141,19 @@
 	        onClickOutside: this.onClickOutside
 	      });
 	    };
+
+	    var ratingBySource = "";
+	    if (this.props.rating === "metascore") {
+	      ratingBySource = this.props.movie.metascore;
+	    } else {
+	      ratingBySource = this.props.movie.tomato_meter;
+	    };
+
 	    return React.createElement(
 	      'div',
-	      { className: 'ui rounded image', style: { 'width': '200px', 'padding': '5px' } },
+	      { className: 'ui rounded image',
+	        style: { 'width': '200px', 'padding': '5px' }
+	      },
 	      React.createElement(
 	        'div',
 	        {
@@ -33147,9 +33161,29 @@
 	          onMouseLeave: this.handleMouseLeave,
 	          onClick: this.handleMovieClick
 	        },
-	        React.createElement('img', { src: this.props.movie.poster,
-	          className: this.state.hover ? "entered-poster" : ""
-	        }),
+	        React.createElement(
+	          'div',
+	          { className: 'grid-poster' },
+	          React.createElement('img', { src: this.props.movie.poster,
+	            className: this.state.hover ? "entered-poster" : ""
+	          }),
+	          React.createElement(
+	            'div',
+	            { className: 'ui image',
+	              style: { 'display': 'inline',
+	                'position': 'relative',
+	                'bottom': '270px',
+	                'left': '190px',
+	                'height': '0px'
+	              }
+	            },
+	            React.createElement(
+	              'a',
+	              { className: 'ui red right ribbon label' },
+	              ratingBySource
+	            )
+	          )
+	        ),
 	        React.createElement(
 	          'div',
 	          { className: this.state.hover ? toolTipStyle : "tooltip" },
@@ -33868,7 +33902,8 @@
 	        movies: this.props.movies,
 	        gridLength: this.props.gridLength,
 	        mobile: this.props.mobile,
-	        itemView: this.props.itemView
+	        itemView: this.props.itemView,
+	        rating: this.props.rating
 	      })
 	    );
 	  }

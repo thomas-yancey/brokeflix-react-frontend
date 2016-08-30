@@ -33,7 +33,6 @@ var MovieInfo = React.createClass({
     });
 
     var hasTrailer = this.hasTrailer();
-
     return (
       <div className="left aligned content"
         style={this.props.mobile ? {'paddingLeft': '20px', 'paddingRight': '20px'} : null}

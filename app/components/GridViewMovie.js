@@ -93,7 +93,6 @@ var GridViewMovie = React.createClass({
     } else {
       ratingBySource = this.props.movie.tomato_meter
     };
-
     return (
         <div className="ui rounded image"
           style={{'width': '200px','padding': '5px'}}

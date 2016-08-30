@@ -40,27 +40,21 @@ var App = React.createClass({
     })
   },
 
-  componentWillMount: function(){
+  componentDidMount: function(){
     window.addEventListener("resize", this.updateDimensions);
     this.debounceScrollTopVisible = _.debounce(this.scrollTopVisible,100);
     if (this.props.mobile){
       window.addEventListener('scroll', this.debounceScrollTopVisible);
     }
-    this.debounceGetMoviesFromServer = _.debounce(this.getMoviesFromServer,200);
-  },
-
-  componentDidMount: function(){
     window.addEventListener('scroll', this.handleScroll);
     this.InitialGetSourcesAndMovies();
     this.updateDimensions();
     this.debounceInfiniteScroll = _.debounce(this.infininiteScrollFromServer,1000);
+    this.debounceGetMoviesFromServer = _.debounce(this.getMoviesFromServer,200);
   },
 
-  getMoviesFromServer: function(){
-    this.setState({
-      loading: true
-    });
-    var params = {
+  searchParams: function(){
+    return {
       page: this.state.current_page,
       start_year: this.state.startYear,
       end_year: this.state.endYear,
@@ -71,6 +65,33 @@ var App = React.createClass({
       selectedSources: this.state.selectedSources,
       title_search: this.state.titleSearch
     };
+  },
+
+  InitialGetSourcesAndMovies: function(){
+    var currURL = PRODUCTION + "/sources"
+    $.ajax({
+      url: currURL,
+      dataType: "json",
+      contentType: 'application/json',
+      method: "get"
+    }).done(function(data){
+      var sources = data.map(function(source){
+        return source.display_name
+      });
+      this.setState({
+        allSources: sources,
+        selectedSources: sources
+      });
+    }.bind(this),this.getMoviesFromServer)
+  },
+
+  getMoviesFromServer: function(){
+    this.setState({
+      loading: true,
+      actor: "",
+      director: ""
+    });
+    var params = this.searchParams();
     var currURL = PRODUCTION + "/movies?" + $.param(params)
     $.ajax({
       url: currURL,
@@ -93,19 +114,10 @@ var App = React.createClass({
       return;
     }
     this.setState({
-      loading: true
+      loading: true,
+      current_page: this.state.current_page + 1
     });
-    var params = {
-      page: this.state.current_page + 1,
-      start_year: this.state.startYear,
-      end_year: this.state.endYear,
-      actor: this.state.actor,
-      director: this.state.director,
-      review_field: this.state.rating,
-      allSources: this.state.allSources,
-      selectedSources: this.state.selectedSources,
-      title_search: this.state.titleSearch
-    };
+    var params = this.searchParams();
     var currURL = PRODUCTION + "/movies?" + $.param(params)
     $.ajax({
       url: currURL,
@@ -123,22 +135,50 @@ var App = React.createClass({
     }.bind(this))
   },
 
-  InitialGetSourcesAndMovies: function(){
-    var currURL = PRODUCTION + "/sources"
+  getActorOrDirectorMoviesFromServer: function(){
+    this.resetStateForSearch();
+
+    var params = this.searchParams();
+    var currURL = PRODUCTION + "/movies?" + $.param(params)
     $.ajax({
       url: currURL,
       dataType: "json",
       contentType: 'application/json',
       method: "get"
     }).done(function(data){
-      var sources = data.map(function(source){
-        return source.display_name
-      });
       this.setState({
-        allSources: sources,
-        selectedSources: sources
+        movies: data.movies,
+        current_page: data.current_page,
+        total_pages: data.total_pages,
+        total_entries: data.total_entries,
+        loading: false
       })
-    }.bind(this),this.getMoviesFromServer)
+    }.bind(this))
+  },
+
+  resetStateForSearch: function(){
+    this.setState({
+      current_page: 1,
+      total_pages: 1,
+      total_entries: 0,
+      startYear: "1900",
+      endYear: "2016",
+      genre: "",
+      selectedSources: this.state.allSources,
+      titleSearch: "",
+    })
+  },
+
+  personSearch: function(person,search){
+    if (search === "actor"){
+      this.setState({
+        actor: person
+      }, this.getActorOrDirectorMoviesFromServer)
+    } else {
+      this.setState({
+        director: person
+      },this.getActorOrDirectorMoviesFromServer)
+    }
   },
 
   handleScroll: function(){
@@ -308,7 +348,6 @@ var App = React.createClass({
     } else {
       menuStyle = smallMenuStyle;
     };
-
     return(
       <div>
         <Nav/>
@@ -345,6 +384,7 @@ var App = React.createClass({
                gridLength={this.state.gridLength}
                scrollTopVisible={this.state.scrollTopVisible}
                handleScrollTop={this.handleScrollTop}
+               personSearch={this.personSearch}
              />
           </div>
           <div className={this.props.mobile ? null : "three wide column" }>

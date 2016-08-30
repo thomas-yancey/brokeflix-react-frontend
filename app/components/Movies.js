@@ -13,6 +13,7 @@ var Movies = React.createClass({
               movie={currMovie}
               itemView={this.props.itemView}
               mobile={this.props.mobile}
+              personSearch={this.props.personSearch}
             />
           )
         } else {
@@ -26,6 +27,7 @@ var Movies = React.createClass({
               rightMost={((idx + 1) % this.props.gridLength === 0)}
               gridLength={this.props.gridLength}
               rating={this.props.rating}
+              personSearch={this.props.personSearch}
             />
           )
         }

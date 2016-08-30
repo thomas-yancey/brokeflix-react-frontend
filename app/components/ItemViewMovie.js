@@ -42,6 +42,7 @@ var ItemViewMovie = React.createClass({
           viewTrailer={this.viewTrailer}
           visibleTrailer={this.state.visibleTrailer}
           mobile={this.props.mobile}
+          personSearch={this.props.personSearch}
         />
         {showingTrailer}
       </div>

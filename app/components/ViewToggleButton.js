@@ -18,7 +18,7 @@ var ViewToggleButton = React.createClass({
         onClick={this.onViewChange}>
           {this.props.itemView ?
             "Grid View" :
-            "Item view"
+            "List view"
           }
       </button>
     )

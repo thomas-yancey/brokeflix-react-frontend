@@ -7,7 +7,6 @@ var ScrollTopButton = require('./ScrollTopButton');
 var MainContainer = React.createClass({
 
   render: function(){
-
     var userButton;
     if (this.props.mobile){
       userButton = (<ScrollTopButton
@@ -35,6 +34,7 @@ var MainContainer = React.createClass({
            mobile={this.props.mobile}
            itemView={this.props.itemView}
            rating={this.props.rating}
+           personSearch={this.props.personSearch}
          />
       </div>
     )
