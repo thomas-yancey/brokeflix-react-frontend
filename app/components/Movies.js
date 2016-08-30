@@ -1,48 +1,45 @@
-var React = require('react')
-var ItemViewMovie = require('./ItemViewMovie')
-var GridViewMovie = require('./GridViewMovie')
+const React = require('react')
+const ItemViewMovie = require('./ItemViewMovie')
+const GridViewMovie = require('./GridViewMovie')
 
-var Movies = React.createClass({
+const Movies = (props) => {
 
-  collect_movies: function(){
-    if (this.props.movies.length > 0){
-      return this.props.movies.map(function(currMovie, idx){
-        if (this.props.itemView){
-          return (
-            <ItemViewMovie key={currMovie + idx + 'itemview'}
-              movie={currMovie}
-              itemView={this.props.itemView}
-              mobile={this.props.mobile}
-              personSearch={this.props.personSearch}
-            />
-          )
-        } else {
-          return (
-            <GridViewMovie key={currMovie + idx + 'gridview'}
-              itemView={this.props.itemView}
-              itemIdx={idx}
-              movieCount={this.props.movies.length}
-              movie={currMovie}
-              rating={this.props.rating}
-              rightMost={((idx + 1) % this.props.gridLength === 0)}
-              gridLength={this.props.gridLength}
-              rating={this.props.rating}
-              personSearch={this.props.personSearch}
-            />
-          )
-        }
-      }.bind(this))
-    }
-  },
-
-  render: function(){
-    var movies = this.collect_movies();
-    return (
-        <div className="ui divided items">
-          {movies}
-        </div>
-    )
+  let movies;
+  if (props.movies.length > 0){
+    movies = props.movies.map((currMovie, idx) => {
+      if (props.itemView){
+        return (
+          <ItemViewMovie key={currMovie + idx + 'itemview'}
+            movie={currMovie}
+            itemView={props.itemView}
+            mobile={props.mobile}
+            personSearch={props.personSearch}
+          />
+        )
+      } else {
+        return (
+          <GridViewMovie key={currMovie + idx + 'gridview'}
+            itemView={props.itemView}
+            itemIdx={idx}
+            movieCount={props.movies.length}
+            movie={currMovie}
+            rating={props.rating}
+            rightMost={((idx + 1) % props.gridLength === 0)}
+            gridLength={props.gridLength}
+            rating={props.rating}
+            personSearch={props.personSearch}
+          />
+        )
+      }
+    })
   }
-});
+
+  return (
+      <div className="ui divided items">
+        {movies}
+      </div>
+  )
+}
+
 
 module.exports = Movies;

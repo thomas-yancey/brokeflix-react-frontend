@@ -1,12 +1,13 @@
-var React = require('react')
+const React = require('react')
 // Not currently in use, going with infininiteScroll
-var PaginationLinks = React.createClass({
-  handleClick: function(pageNumber){
+const PaginationLinks = React.createClass({
+  handleClick (pageNumber){
     this.props.handlePaginationClick(pageNumber);
   },
-  createLinkArray: function(){
-    var counter = this.props.current_page;
-    var linkArray = [];
+
+  createLinkArray () {
+    let counter = this.props.current_page;
+    let linkArray = [];
 
     if (counter > 1){
       counter -= 1
@@ -21,10 +22,10 @@ var PaginationLinks = React.createClass({
     return linkArray;
   },
 
-  render: function(){
+  render () {
     this.createLinkArray();
-    var linkArray = this.createLinkArray();
-    var paginationLinks = linkArray.map(function(pageNumber, idx){
+    let linkArray = this.createLinkArray();
+    let paginationLinks = linkArray.map(function(pageNumber, idx){
       return (
         <a key={pageNumber, idx}
           className={pageNumber === this.props.current_page ? "active item" : "item"}

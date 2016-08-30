@@ -1,19 +1,20 @@
-var React = require('react');
+const React = require('react');
 
-var NotSelectedSource = React.createClass({
+const NotSelectedSource = React.createClass({
 
-  onAddSourceClick: function(){
+  onAddSourceClick () {
     this.props.handleSourceChange(this.props.source);
     this.props.onMenuToggle();
   },
 
-  render: function(){
+  render () {
     return (
       <div className="item" onClick={this.onAddSourceClick}>
         {this.props.source}
       </div>
     )
   }
+
 });
 
 module.exports = NotSelectedSource;
