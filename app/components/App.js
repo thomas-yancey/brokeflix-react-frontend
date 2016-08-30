@@ -1,21 +1,20 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var $ = require('jquery');
-var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
-var Nav = require('./Nav');
-var PaginationLinks = require('./PaginationLinks');
-var Movies = require('./Movies');
-var MainContainer = require('./MainContainer');
-var FilterContainer = require('./FilterContainer');
-var YearFilter = require('./YearFilter');
-var Rcslider = require('rc-slider');
-var ScrollTopButton = require('./ScrollTopButton');
-var _ = require('lodash');
-var $ = require('jquery');
-var DEV = "http://localhost:3000"
-var PRODUCTION = "https://brokeflix.herokuapp.com"
+const React = require('react');
+const ReactDOM = require('react-dom');
+const $ = require('jquery');
+const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+const Nav = require('./Nav');
+const PaginationLinks = require('./PaginationLinks');
+const Movies = require('./Movies');
+const MainContainer = require('./MainContainer');
+const FilterContainer = require('./FilterContainer');
+const YearFilter = require('./YearFilter');
+const Rcslider = require('rc-slider');
+const ScrollTopButton = require('./ScrollTopButton');
+const _ = require('lodash');
+const DEV = "http://localhost:3000"
+const PRODUCTION = "https://brokeflix.herokuapp.com"
 
-var App = React.createClass({
+const App = React.createClass({
   getInitialState: function(){
     return ({
       movies: {},
@@ -40,7 +39,7 @@ var App = React.createClass({
     })
   },
 
-  componentDidMount: function(){
+  componentDidMount () {
     window.addEventListener("resize", this.updateDimensions);
     this.debounceScrollTopVisible = _.debounce(this.scrollTopVisible,100);
     if (this.props.mobile){
@@ -53,7 +52,7 @@ var App = React.createClass({
     this.debounceGetMoviesFromServer = _.debounce(this.getMoviesFromServer,200);
   },
 
-  searchParams: function(){
+  searchParams () {
     return {
       page: this.state.current_page,
       start_year: this.state.startYear,
@@ -67,7 +66,7 @@ var App = React.createClass({
     };
   },
 
-  InitialGetSourcesAndMovies: function(){
+  InitialGetSourcesAndMovies () {
     var currURL = PRODUCTION + "/sources"
     $.ajax({
       url: currURL,
@@ -85,7 +84,7 @@ var App = React.createClass({
     }.bind(this),this.getMoviesFromServer)
   },
 
-  getMoviesFromServer: function(){
+  getMoviesFromServer () {
     this.setState({
       loading: true,
       actor: "",
@@ -109,7 +108,7 @@ var App = React.createClass({
     }.bind(this))
   },
 
-  infininiteScrollFromServer: function(){
+  infininiteScrollFromServer () {
     if (this.state.current_page == this.state.total_pages){
       return;
     }
@@ -135,59 +134,13 @@ var App = React.createClass({
     }.bind(this))
   },
 
-  getActorOrDirectorMoviesFromServer: function(){
-    this.resetStateForSearch();
-
-    var params = this.searchParams();
-    var currURL = PRODUCTION + "/movies?" + $.param(params)
-    $.ajax({
-      url: currURL,
-      dataType: "json",
-      contentType: 'application/json',
-      method: "get"
-    }).done(function(data){
-      this.setState({
-        movies: data.movies,
-        current_page: data.current_page,
-        total_pages: data.total_pages,
-        total_entries: data.total_entries,
-        loading: false
-      })
-    }.bind(this))
-  },
-
-  resetStateForSearch: function(){
-    this.setState({
-      current_page: 1,
-      total_pages: 1,
-      total_entries: 0,
-      startYear: "1900",
-      endYear: "2016",
-      genre: "",
-      selectedSources: this.state.allSources,
-      titleSearch: "",
-    })
-  },
-
-  personSearch: function(person,search){
-    if (search === "actor"){
-      this.setState({
-        actor: person
-      }, this.getActorOrDirectorMoviesFromServer)
-    } else {
-      this.setState({
-        director: person
-      },this.getActorOrDirectorMoviesFromServer)
-    }
-  },
-
-  handleScroll: function(){
+  handleScroll () {
     // debounce scroll if at the bottom
     this.infiniteScrollCall();
     this.debounceScrollTopVisible();
   },
 
-  infiniteScrollCall: function(){
+  infiniteScrollCall () {
     $(window).scroll(function() {
      if($(window).scrollTop() + $(window).height() >= $(document).height() - 200) {
          this.debounceInfiniteScroll();
@@ -195,12 +148,12 @@ var App = React.createClass({
     }.bind(this));
   },
 
-  updateDimensions: function(){
+  updateDimensions () {
     this.handleChangeToMobile();
     this.handleGridLengthChange();
   },
 
-  handleChangeToMobile: function(){
+  handleChangeToMobile () {
     if ($(window).width() < 800) {
       this.setState({
         mobile: true,
@@ -214,7 +167,7 @@ var App = React.createClass({
     };
   },
 
-  handleGridLengthChange: function(){
+  handleGridLengthChange () {
     if ($(window).width() >= 1200) {
       this.setState({
         gridLength: 4
@@ -232,20 +185,20 @@ var App = React.createClass({
     };
   },
 
-  handleViewChange: function(){
+  handleViewChange () {
     this.setState({
       itemView: !this.state.itemView
     });
   },
 
-  handleScrollTop: function(){
+  handleScrollTop () {
     $('html,body').scrollTop(0);
     this.setState({
       scrollTopVisible: false
     });
   },
 
-  scrollTopVisible: function(){
+  scrollTopVisible () {
     var height = $(window).scrollTop();
     if (height > 430){
       this.setState({
@@ -258,7 +211,7 @@ var App = React.createClass({
     };
   },
 
-  selectedSourcesContains: function(value){
+  selectedSourcesContains (value) {
     for (var i = 0; i < this.state.selectedSources.length; i++){
       if (this.state.selectedSources[i] === value){
         return true;
@@ -267,20 +220,20 @@ var App = React.createClass({
     return false;
   },
 
-  removeUncheckedSource: function(source){
+  removeUncheckedSource (source) {
     return this.state.selectedSources.filter(function(curr_source){
       return source !== curr_source
     }.bind(this));
   },
 
-  handleTitleSearchChange: function(search){
+  handleTitleSearchChange (search) {
     this.setState({
       titleSearch: search,
       current_page: 1
     },this.debounceGetMoviesFromServer)
   },
 
-  handleSourceChange: function(source){
+  handleSourceChange (source) {
     newSelectedSources = this.state.selectedSources
     if (this.selectedSourcesContains(source)){
       newSelectedSources = this.removeUncheckedSource(source)
@@ -293,7 +246,7 @@ var App = React.createClass({
     },this.debounceGetMoviesFromServer)
   },
 
-  handlePaginationClick: function(pageNumber){
+  handlePaginationClick (pageNumber) {
     if (!(pageNumber > this.state.total_pages) && !(pageNumber < 1)){
       this.setState({
         current_page: pageNumber
@@ -302,43 +255,43 @@ var App = React.createClass({
     window.scrollTo(0, 0);
   },
 
-  handleStartYearChange: function(value){
+  handleStartYearChange (value) {
     this.setState({
       startYear: value,
       current_page: 1
     });
   },
 
-  handleEndYearChange: function(value){
+  handleEndYearChange (value) {
     this.setState({
       endYear: value,
       current_page: 1
     },this.debounceGetMoviesFromServer);
   },
 
-  handleRatingChange: function(value){
+  handleRatingChange (value) {
     this.setState({
       rating: value,
       current_page: 1
     },this.getMoviesFromServer);
   },
 
-  render: function(){
-    var wideMenuStyle = {'position': 'fixed',
+  render () {
+    const wideMenuStyle = {'position': 'fixed',
                          'overflowY': 'scroll',
                          'width': '250px',
                          'height': '100%',
                          'left': '0',
                          'paddingLeft': '20px',
                          'marginBottom': '50px'};
-    var smallMenuStyle = {'position': 'fixed',
+    const smallMenuStyle = {'position': 'fixed',
                           'overflowY': 'scroll',
                           'width': '190px',
                           'left': '0',
                           'paddingLeft': '20px',
                           'paddingBottom': '150px',
                           'height': '100%'};
-    var mobileMenuStyle = {};
+    let mobileMenuStyle = {};
     menuStyle = "";
 
     if (this.state.gridLength > 3){
