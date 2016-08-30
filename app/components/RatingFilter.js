@@ -1,29 +1,29 @@
-var React = require('react');
+const React = require('react');
 
-var RatingFilter = React.createClass({
-  getInitialState: function(){
+const RatingFilter = React.createClass({
+  getInitialState () {
     return ({
       visibleMenu: false
     })
   },
 
-  handleMetaCriticClick: function(e){
+  handleMetaCriticClick (e) {
     this.props.handleRatingChange("metascore")
   },
 
-  handleTomatoClick: function(e){
+  handleTomatoClick (e) {
     this.props.handleRatingChange("tomato_meter")
   },
 
-  onToggleMenuOpen: function(){
+  onToggleMenuOpen () {
     this.setState({
       visibleMenu: !this.state.visibleMenu
     })
   },
 
-  render: function(){
-    var rottenTomatoesURL = "./rottentomatoes_full.png";
-    var metascoreURL = "./metacritic_full.png";
+  render () {
+    let rottenTomatoesURL = "./rottentomatoes_full.png";
+    let metascoreURL = "./metacritic_full.png";
     return (
       <div className="rating-container">
         <div className= {this.state.visibleMenu ?

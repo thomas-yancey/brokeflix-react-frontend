@@ -2,7 +2,7 @@ var React = require('react');
 
 var Source = React.createClass({
 
-  styleSelector: function(){
+  styleSelector () {
     if (this.props.source.display_name === "Viewster"){
       return "mini ui yellow button";
     } else if (this.props.source.display_name === "Shout! Factory TV"){
@@ -29,7 +29,7 @@ var Source = React.createClass({
      return "mini ui button"
   },
 
-  render: function(){
+  render () {
     return (
       <a href={this.props.source.link}>
         <button key={this.props.source + "-item-" + this.props.idx}

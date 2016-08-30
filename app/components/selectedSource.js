@@ -1,11 +1,11 @@
 var React = require('react');
 
 var SelectedSource = React.createClass({
-  onDeleteIconClick: function(){
+  onDeleteIconClick () {
     this.props.handleSourceChange(this.props.source);
   },
 
-  render: function(){
+  render () {
     return (
       <a className="ui label transition visible" style={{'display': 'inline-block'}}>
         {this.props.source}

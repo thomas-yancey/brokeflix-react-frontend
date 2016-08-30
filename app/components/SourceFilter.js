@@ -1,24 +1,24 @@
-var React = require('react');
-var SelectedSource = require('./SelectedSource');
-var NotSelectedSource = require('./NotSelectedSource');
-var onClickOutside = require('react-onclickoutside');
+const React = require('react');
+const SelectedSource = require('./SelectedSource');
+const NotSelectedSource = require('./NotSelectedSource');
+const onClickOutside = require('react-onclickoutside');
 
-var SourceFilter = React.createClass({
-  getInitialState: function(){
+const SourceFilter = React.createClass({
+  getInitialState () {
     return ({
       menuVisible: false
     })
   },
 
-  onMenuToggle: function(){
+  onMenuToggle () {
     this.setState({
       menuVisible: !this.state.menuVisible
     });
   },
 
-  createSources: function(){
+  createSources () {
     this.getInitialState
-    return this.props.allSources.map(function(source){
+    return this.props.allSources.map((source) => {
       return(
         <SourceCheckbox
           key={source + this.props.selectedSources}
@@ -27,10 +27,10 @@ var SourceFilter = React.createClass({
           handleSourceChange={this.props.handleSourceChange}
         />
       )
-    }.bind(this))
+    })
   },
 
-  selectedSourcesDoesNotInclude: function(value){
+  selectedSourcesDoesNotInclude (value) {
     for (var i=0; i < this.props.selectedSources.length; i++){
       if (this.props.selectedSources[i] === value){
         return false;
@@ -39,29 +39,29 @@ var SourceFilter = React.createClass({
     return true;
   },
 
-  render: function(){
-    var openStyle = "ui fluid dropdown selection multiple active visible"
-    var closedStyle = "ui fluid dropdown selection multiple"
-    var selectedSources = this.props.selectedSources.map(function(source, idx){
+  render () {
+    let openStyle = "ui fluid dropdown selection multiple active visible"
+    let closedStyle = "ui fluid dropdown selection multiple"
+    let selectedSources = this.props.selectedSources.map((source, idx) => {
       return (
         <SelectedSource source={source}
           key={idx + source + "selected"}
           handleSourceChange={this.props.handleSourceChange}
         />
       )
-    }.bind(this))
+    })
 
     var notSelectedSources = this.props.allSources.filter(this.selectedSourcesDoesNotInclude)
-    var notSelectedSources = notSelectedSources.map(function(source,idx){
+    var notSelectedSources = notSelectedSources.map((source,idx) => {
       return (
         <NotSelectedSource key={idx + source + "not"} source={source}
           handleSourceChange={this.props.handleSourceChange}
           onMenuToggle={this.onMenuToggle}
         />
       )
-    }.bind(this));
+    });
 
-    return(
+    return (
       <div className="source-filter">
         <div
           className={this.state.menuVisible ? openStyle : closedStyle }

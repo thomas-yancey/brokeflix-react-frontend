@@ -1,14 +1,12 @@
-var React = require('react');
+const React = require('react');
 
-var ViewToggleButton = React.createClass({
+const ViewToggleButton = React.createClass({
 
-  onViewChange: function(){
+  onViewChange () {
     this.props.handleViewChange();
   },
 
-
-
-  render: function(){
+  render () {
     return (
       <button className = "ui primary button view"
         style={{'position': 'fixed',

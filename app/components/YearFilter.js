@@ -1,20 +1,20 @@
-var React = require('react')
-var Rcslider = require('rc-slider')
+const React = require('react')
+const Rcslider = require('rc-slider')
 
-var YearFilter = React.createClass({
-  getDefaultProps: function(){
+const YearFilter = React.createClass({
+  getDefaultProps () {
     return {
       startYear: 1900,
       endYear: 2016
     }
   },
 
-  onYearChange: function(e){
+  onYearChange (e) {
     this.props.handleStartYearChange(e[0])
     this.props.handleEndYearChange(e[1])
   },
 
-  render: function(){
+  render () {
     return (
       <div className="year-range-container" style={{'width': '80%', 'margin': '0 auto'}}>
           <Rcslider

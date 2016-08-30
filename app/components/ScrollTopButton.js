@@ -1,12 +1,12 @@
-var React = require('react');
-var $ = require('jquery');
+const React = require('react');
+const $ = require('jquery');
 
-var ScrollTopButton = React.createClass({
-  onScrollTop: function(){
+const ScrollTopButton = React.createClass({
+  onScrollTop (){
     this.props.handleScrollTop();
   },
 
-  render: function(){
+  render () {
     return (
         <div className="ui image"
           style={this.props.scrollTopVisible ?

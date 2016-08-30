@@ -1,21 +1,20 @@
-var React = require('react');
+const React = require('react');
 
+const Search = React.createClass({
 
-var Search = React.createClass({
-
-  getDefaultProps: function(){
+  getDefaultProps () {
     titleSearch: "";
   },
 
-  onTextChange: function(e){
+  onTextChange (e) {
     this.props.handleTitleSearchChange(e.target.value)
   },
 
-  onSearchClick: function(){
+  onSearchClick () {
     this.props.getMoviesFromServer();
   },
 
-  render: function(){
+  render () {
     return (
       <div className="title-search-container">
         <div className={this.props.mobile ? "ui fluid input" : "ui fluid input" }>
