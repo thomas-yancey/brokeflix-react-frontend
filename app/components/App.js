@@ -1,7 +1,6 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 const $ = require('jquery');
-const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 const Nav = require('./Nav');
 const PaginationLinks = require('./PaginationLinks');
 const Movies = require('./Movies');
